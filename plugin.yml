@@ -1,0 +1,46 @@
+---
+name: PrideCore
+main: PrideCore\PrideCore
+src-namespace-prefix: PrideCore
+author: "PrideMC Network"
+website: "https://github.com/PrideMC/"
+version: 3.0
+api: 4.0.0
+permissions:
+    pride.staff:
+        default: op
+    pride.staff.ban:
+        default: op  
+    pride.staff.kick:
+        default: op 
+    pride.staff.freeze:
+        default: op 
+    pride.staff.pardon:
+        default: op 
+    pride.staff.maintenance:
+        default: op 
+    pride.staff.build:
+        default: op 
+    pride.staff.change_skin:
+        default: op 
+    cosmetics.tag.1:
+        default: op
+    cosmetics.tag.2:
+        default: op
+    cosmetics.tag.3:
+        default: op
+    cosmetics.tag.4:
+        default: op
+    cosmetics.tag.5:
+        default: op
+    cosmetics.tag.6:
+        default: op
+    cosmetics.tag.7:
+        default: op
+    cosmetics.tag.8:
+        default: op
+    cosmetics.tag.9:
+        default: op
+    cosmetics.tag.10:
+        default: op
+...
