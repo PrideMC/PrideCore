@@ -1,0 +1,2 @@
+# PrideCore
+PrideCore Plugin
