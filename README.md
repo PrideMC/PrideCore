@@ -1,2 +1,2 @@
 # PrideCore
-PrideCore Plugin
+PrideCore Plugin (Discontinued)
