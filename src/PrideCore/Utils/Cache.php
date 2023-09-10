@@ -30,7 +30,6 @@ declare(strict_types=1);
 
 namespace PrideCore\Utils;
 
-use Closure;
 use DateTime;
 use pocketmine\Server;
 use pocketmine\utils\SingletonTrait;

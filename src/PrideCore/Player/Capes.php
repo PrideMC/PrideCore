@@ -113,7 +113,7 @@ class Capes {
 	 */
 	public function updatePlayerCape($player) : void {
 		$this->QueryCape($player->getUniqueId()->__toString(), function (string $owned) use ($player) {
-			$player->setOwnedCape($owned);
+			$player->setOwnedCapes($owned);
 		});
 	}
 

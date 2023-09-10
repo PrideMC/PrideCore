@@ -177,8 +177,8 @@ final class TimeUtils {
 		}
 		return $diff->format($fmt) . ($nega ? " ago" : "");
 	}
-    
-    public static function stringTimeToInt(string $string) : int
+
+	public static function stringTimeToInt(string $string) : int
 	{
 		/**
 		 * Rules:
@@ -199,32 +199,32 @@ final class TimeUtils {
 			return null;
 		}
 		$found[2] = preg_replace("/[^0-9]/", "", $found[0]);
-        $t = 0;
+		$t = 0;
 		foreach ($found[2] as $k => $i) {
 			switch ($c = $found[1][$k]) {
 				case "y":
-                    $t =+ 20 * 60 * 60 * 12 * 365;
-                    break;
+					$t = +20 * 60 * 60 * 12 * 365;
+					break;
 				case "w":
-                    $t =+ 20 * 60 * 60 * 12 * 7;
-                    break;
+					$t = +20 * 60 * 60 * 12 * 7;
+					break;
 				case "d":
-					$t =+ 20 * 60 * 60 * 12;
+					$t = +20 * 60 * 60 * 12;
 					break;
 				case "mo":
-					$t =+ 20 * 60 * 60 * 12 * 31;
+					$t = +20 * 60 * 60 * 12 * 31;
 					break;
 				case "h":
-                    $t =+ 20 * 60 * 60;
-                    break;
+					$t = +20 * 60 * 60;
+					break;
 				case "m":
-                    $t =+ 20 * 60;
-                    break;
+					$t = +20 * 60;
+					break;
 				case "s":
-					$t =+ 20;
+					$t = +20;
 					break;
 				default:
-					$t =+ 20;
+					$t = +20;
 					break;
 			}
 		}
