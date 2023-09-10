@@ -1,6 +1,8 @@
 name: Build phar package.
 run-name: Build phar package with build.php
-on: [push,workflow_dispatch,pull]
+on:
+  push:
+  workflow_dispatch:
 jobs:
  build-phar:
    runs-on: ubuntu-latest
