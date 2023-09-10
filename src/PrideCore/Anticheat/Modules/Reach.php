@@ -61,6 +61,7 @@ class Reach extends Anticheat implements Listener {
 		}
 	}
 
+	// V2 - just check again...
 	public function onDamage(EntityDamageEvent $event){
         if($event instanceof EntityDamageByEntityEvent and $event->getEntity() instanceof Player and $event->getDamager() instanceof Player){
             if($event->getDamager()->getRankId() === Rank::OWNER) return;
