@@ -31,6 +31,7 @@ declare(strict_types=1);
 namespace PrideCore\Utils;
 
 use Closure;
+use DateTime;
 use pocketmine\Server;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\TextFormat as TF;
@@ -62,27 +63,6 @@ class Cache
 		return $this->playerCount;
 	}
 
-	public function QueryCoins(string $uuid, Closure $resolve) : void
-	{
-		Database::getInstance()->getDatabase()->executeSelect("getCoins", ["uuid" => Utils::removeDashes($uuid)], function (array $rows) use ($resolve) {
-			$coins = $rows[0]["coins"] ?? 0;
-			$resolve($coins);
-		}, fn (SqlError $err) => Server::getInstance()->getLogger()->error(Core::PREFIX . Core::ARROW . $err->getMessage()));
-	}
-
-	public function setPlayerCoins(Player $player) : void
-	{
-		$this->QueryCoins($player->getUniqueId()->__toString(), function (int $amount) use ($player) {
-			$player->setPlayerCoins($amount);
-		});
-	}
-
-	public function setCoins(Player $player, int $amount) : void
-	{
-		Database::getInstance()->getDatabase()->executeGeneric("setCoins", ["uuid" => $player->getUniqueId()->__toString(), "rank_id" => $rank], null, fn (SqlError $err) => Server::getInstance()->getLogger()->error(Core::PREFIX . Core::ARROW . $err->getMessage()));
-		$this->setPlayerCoins($player);
-	}
-
 	public function addWarnCount(string $player) : void
 	{
 		$this->warn[$player] = isset($this->warn[$player]) ? $this->warn[$player] + 1 : 1;
@@ -110,15 +90,15 @@ class Cache
 		}
 
 		if($this->getProfanityCount($player->getUniqueId()->__toString()) == 15){
-			$target->kick(Core::PREFIX . TF::GRAY . "\nYou have been kicked from our network." . "\n\n" . Core::ARROW . TF::RESET . TF::GRAY . "Reason: " . TF::YELLOW . "Hate Speech/Profanity" . TF::RESET);
+			$player->kick(Core::PREFIX . TF::GRAY . "\nYou have been kicked from our network." . "\n\n" . Core::ARROW . TF::RESET . TF::GRAY . "Reason: " . TF::YELLOW . "Hate Speech/Profanity" . TF::RESET);
 			$this->setUserOffensive($player->getUniqueId()->__toString(), true);
 			return;
 		}
 
 		if($this->isUserOffensive($player->getUniqueId()->__toString())){
-			Server::getInstance()->getNameBans()->addBan($player, $reason, Utils::stringToTimestamp("1h")[0], "PrideMC");
-			$player->kick(Core::PREFIX . TF::GRAY . "\nYou have been banned from our network." . "\n\n" . Core::ARROW . TF::RESET . TF::GRAY . " Reason: " . TF::YELLOW . "Profanity" . TF::RESET . "\n" . Core::ARROW . TF::RESET . TF::GRAY . "Expires: " . TF::YELLOW . Utils::stringToTimestamp("1hd")[0]->format("Y-m-d H:i:s"));
-			$this->resetProfanityCount();
+			Server::getInstance()->getNameBans()->addBan($player->getName(), "Offensive/Hate Speech", TimeUtils::stringToTimestampAdd("1h", new DateTime("NOW"))[0], "PrideMC");
+			$player->kick(Core::PREFIX . TF::GRAY . "\nYou have been banned from our network." . "\n\n" . Core::ARROW . TF::RESET . TF::GRAY . " Reason: " . TF::YELLOW . "Offensive/Hate Speech" . TF::RESET . "\n" . Core::ARROW . TF::RESET . TF::GRAY . "Expires: " . TF::YELLOW . TimeUtils::stringToTimestampAdd("1h", new DateTime("NOW"))[0]->format("Y-m-d H:i:s"));
+			$this->resetProfanityCount($player);
 			return;
 		}
 	}
@@ -128,7 +108,7 @@ class Cache
 		return $this->pf[$player] ?? 0;
 	}
 
-	public function resetProfanityCount(string $player) : void
+	public function resetProfanityCount(Player $player) : void
 	{
 		$this->pf[$player->getUniqueId()->__toString()] = isset($this->pf[$player->getUniqueId()->__toString()]) ? 0 : 0; // reset
 	}
@@ -138,6 +118,6 @@ class Cache
 	}
 
 	public function isUserOffensive(string $id) : bool {
-		return $this->isUserOffensive[$id] ?? false;
+		return $this->offense[$id] ?? false;
 	}
 }

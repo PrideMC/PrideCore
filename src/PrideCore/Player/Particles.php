@@ -30,17 +30,25 @@ declare(strict_types=1);
 
 namespace PrideCore\Player;
 
+use Closure;
 use pocketmine\color\Color;
 use pocketmine\math\Vector3;
+use pocketmine\Server;
 use pocketmine\world\particle\DustParticle;
 use pocketmine\world\particle\FlameParticle;
 use pocketmine\world\particle\HeartParticle;
 use pocketmine\world\particle\LavaDripParticle;
 use pocketmine\world\particle\LavaParticle;
+use pocketmine\world\particle\Particle;
 use pocketmine\world\particle\PortalParticle;
 use pocketmine\world\particle\RedstoneParticle;
 use pocketmine\world\particle\SmokeParticle;
+use poggit\libasynql\SqlError;
+use PrideCore\Core;
+use PrideCore\Utils\Database;
 use PrideCore\Utils\ThreeDimensionalPoint;
+use PrideCore\Utils\Utils;
+
 use function cos;
 use function explode;
 use function implode;
@@ -117,7 +125,7 @@ class Particles {
 	public static function addParticle(Player $player, int $particle_id) : void {
 		$tags = explode(",", $player->getOwnedParticles());
 
-		$tags[] = [$tag_id => ""];
+		$tags[] = [$particle_id => ""];
 		$result = implode(",", $tags);
 		$player->setOwnedParticles($result);
 		Database::getInstance()->getDatabase()->executeGeneric("setParticlesOwned", ["uuid" => $player->getUniqueId()->__toString(), "particle_owned" => $result], null, fn (SqlError $err) => Server::getInstance()->getLogger()->error(Core::PREFIX . Core::ARROW . $err->getMessage()));
@@ -134,7 +142,7 @@ class Particles {
 	}
 
 	public function updateOwnedPlayerParticles(Player $player) : void {
-		$this->QueryTags($player->getUniqueId()->__toString(), function (string $owned) use ($player) {
+		$this->QueryParticle($player->getUniqueId()->__toString(), function (string $owned) use ($player) {
 			$player->setOwnedParticles($owned);
 		});
 	}
@@ -143,7 +151,7 @@ class Particles {
 		$particle = explode(",", $player->getOwnedParticles());
 
 		unset($particle[$particle_id]);
-		$result = implode(",", $tags);
+		$result = implode(",", $particle);
 		$player->setOwnedParticles($result);
 		Database::getInstance()->getDatabase()->executeGeneric("setParticlesOwned", ["uuid" => $player->getUniqueId()->__toString(), "particle_owned" => $result], null, fn (SqlError $err) => Server::getInstance()->getLogger()->error(Core::PREFIX . Core::ARROW . $err->getMessage()));
 	}
@@ -345,7 +353,7 @@ class Particles {
 		$color = $this->toRGB($player->getParticleColor());
 		$particle = new DustParticle(new Color($color[0], $color[1], $color[2]));
 
-		foreach (self::outline as $point) {
+		foreach (self::$outline as $point) {
 			$rotated = $point->rotate($rot);
 
 			$player->getWorld()->addParticle(new Vector3($rotated->x + $x, $rotated->y + $y, $rotated->z + $z), $particle);

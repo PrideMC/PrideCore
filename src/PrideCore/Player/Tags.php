@@ -31,8 +31,11 @@ declare(strict_types=1);
 namespace PrideCore\Player;
 
 use Closure;
+use pocketmine\Server;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\TextFormat as TF;
+use poggit\libasynql\SqlError;
+use PrideCore\Core;
 use PrideCore\Utils\Database;
 use PrideCore\Utils\Utils;
 use function explode;

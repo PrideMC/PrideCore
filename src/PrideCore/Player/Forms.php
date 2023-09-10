@@ -447,7 +447,7 @@ class Forms
 				$player->sendMessage(Core::PREFIX . " " . Core::ARROW . " " . TF::RED . "Sorry, we couldnt find player: " . $data[1]);
 			} else {
 				Tags::getInstance()->addTag($data[0], $data[1] + 1);
-				$sender->sendMessage(Core::PREFIX . " " . Core::ARROW . TF::GREEN . " Successfully given to " . TF::AQUA . $target->getName() . TF::GREEN . " a tag.");
+				$player->sendMessage(Core::PREFIX . " " . Core::ARROW . TF::GREEN . " Successfully given to " . TF::AQUA . $target->getName() . TF::GREEN . " a tag.");
 			}
 		});
 
@@ -479,7 +479,7 @@ class Forms
 				foreach($tags as $tag){
 					$list[] = [$tag => Tags::getInstance()->displayName($tag)]; // converter
 				}
-				$this->removeTag($player, $target, $list);
+				$this->removeTags($player, $target, $list);
 			}
 		});
 
@@ -494,7 +494,7 @@ class Forms
 	 * @param mixed $list
 	 */
 	public function removeTags($player, $target, $list) : void{
-		$form = new SimpleForm(function (Player $player, $data) use ($list){
+		$form = new SimpleForm(function (Player $player, $data) use ($target, $list){
 			if ($data === null) {
 				return;
 			}
@@ -547,7 +547,7 @@ class Forms
 				$player->sendMessage(Core::PREFIX . " " . Core::ARROW . " " . TF::RED . "Sorry, we couldnt find player: " . $data[1]);
 			} else {
 				Capes::getInstance()->addCape($target, Capes::getInstance()->getAllCapes()[$data[1]]);
-				$sender->sendMessage(Core::PREFIX . " " . Core::ARROW . TF::GREEN . " Successfully given to " . TF::AQUA . $target->getName() . TF::GREEN . " a tag.");
+				$player->sendMessage(Core::PREFIX . " " . Core::ARROW . TF::GREEN . " Successfully given to " . TF::AQUA . $target->getName() . TF::GREEN . " a tag.");
 			}
 		});
 
@@ -594,12 +594,12 @@ class Forms
 	 * @param mixed $list
 	 */
 	public function removeCape($player, $target, $list) : void{
-		$form = new SimpleForm(function (Player $player, $data) use ($list){
+		$form = new SimpleForm(function (Player $player, $data) use ($list, $target){
 			if ($data === null) {
 				return;
 			}
 
-			Tags::removeCape($target, $data);
+			Capes::removeCape($target, $data);
 			$player->sendMessage(Core::PREFIX . " " . Core::ARROW . TF::GREEN . " Successfully removed to " . TF::AQUA . $target->getName() . TF::GREEN . " the " . Tags::$tags[$data] . TF::GREEN . " tag.");
 		});
 
@@ -661,7 +661,7 @@ class Forms
 	public function viewCapes($player) : void{
 		$form = new SimpleForm(function(Player $player, $data){
 			if($data === null) return;
-			$player->setCape($data);
+			$player->setSkinCape($data);
 		});
 
 		$form->setTitle(Core::PREFIX . " " . Core::ARROW . " " . TF::YELLOW . "Capes");

@@ -32,6 +32,7 @@ namespace PrideCore\Player;
 
 use pocketmine\entity\Skin;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
+use pocketmine\network\mcpe\protocol\StopSoundPacket;
 use pocketmine\scheduler\ClosureTask;
 use pocketmine\utils\TextFormat as TF;
 use PrideCore\Core;
@@ -83,6 +84,8 @@ class Player extends \pocketmine\player\Player
 	/** @var Skin|null|null */
 	private ?Skin $oldSkin = null;
 
+	private string $cape;
+
 	public function getActiveParticle() : int {
 		return $this->particle_id;
 	}
@@ -105,6 +108,14 @@ class Player extends \pocketmine\player\Player
 
 	public function setActiveParticle(int $particle) : void {
 		$this->particle_id = $particle;
+	}
+
+	public function setParticleDisplay(int $particle) : void {
+		$this->particle_id = $particle;
+	}
+
+	public function getParticleDisplay() : int {
+		return $this->particle_id;
 	}
 
 	public function setParticleType(int $particle) : void {
@@ -179,7 +190,7 @@ class Player extends \pocketmine\player\Player
 
 	public function stopSound(string $sound, bool $stopAll = false)
 	{
-		$this->getNetworkSession()->sendDataPacket(PlaySoundPacket::create($sound, $stopAll));
+		$this->getNetworkSession()->sendDataPacket(StopSoundPacket::create($sound, $stopAll));
 	}
 
 	public function getCurrentCape() : ?string
@@ -189,7 +200,7 @@ class Player extends \pocketmine\player\Player
 
 	public function setCurrentCape(string $cape) : void
 	{
-		$this->setCape($cape);
+		$this->setSkinCape($cape);
 		$this->cape = $cape;
 	}
 
@@ -205,7 +216,7 @@ class Player extends \pocketmine\player\Player
 
 	public function createCape(string $cape) : string
 	{
-		$path = $this->plugin->getDataFolder() . "capes/{$cape}.png";
+		$path = Core::getInstance()->getDataFolder() . "capes/{$cape}.png";
 		$img = @imagecreatefrompng($path);
 		$bytes = '';
 		$l = (int) @getimagesize($path)[1];
@@ -276,7 +287,7 @@ class Player extends \pocketmine\player\Player
 		return $this->capes_owned;
 	}
 
-	public function setOwnedCape(string $list) : void {
+	public function setOwnedCapes(string $list) : void {
 		$this->capes_owned = $list;
 	}
 

@@ -35,6 +35,7 @@ use CortexPE\DiscordWebhookAPI\Message;
 use CortexPE\DiscordWebhookAPI\Webhook;
 use pocketmine\utils\SingletonTrait;
 use PrideCore\Core;
+use PrideCore\Utils\Config;
 
 /**
  * Discord Webhook related functions.

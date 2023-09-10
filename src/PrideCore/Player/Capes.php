@@ -31,8 +31,10 @@ declare(strict_types=1);
 namespace PrideCore\Player;
 
 use Closure;
+use pocketmine\Server;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\TextFormat as TF;
+use poggit\libasynql\SqlError;
 use PrideCore\Core;
 use PrideCore\Utils\Database;
 use PrideCore\Utils\Rank;
@@ -74,28 +76,28 @@ class Capes {
 	}
 
 	public static function getOwnedCape(Player $player) : ?array {
-		if($player->getOwnedCape() === null) return null;
+		if($player->getOwnedCapes() === null) return null;
 
-		$tags = explode(",", $player->getOwnedCape());
+		$tags = explode(",", $player->getOwnedCapes());
 
 		return $tags;
 	}
 
 	public static function addCape(Player $player, string $cape_name) : void {
-		$tags = explode(",", $player->getOwnedCape());
+		$tags = explode(",", $player->getOwnedCapes());
 
-		$tags[] = [$tag_id => ""];
+		$tags[] = [$cape_name => ""];
 		$result = implode(",", $tags);
-		$player->setOwnedCape($result);
+		$player->setOwnedCapes($result);
 		Database::getInstance()->getDatabase()->executeGeneric("setCapeOwned", ["uuid" => $player->getUniqueId()->__toString(), "cape_owned" => $result], null, fn (SqlError $err) => Server::getInstance()->getLogger()->error(Core::PREFIX . Core::ARROW . $err->getMessage()));
 	}
 
 	public static function removeCape(Player $player, string $cape_name) : void{
-		$capes = explode(",", $player->getOwnedCape());
+		$capes = explode(",", $player->getOwnedCapes());
 
 		unset($capes[$cape_name]);
 		$result = implode(",", $capes);
-		$player->setOwnedCape($result);
+		$player->setOwnedCapes($result);
 		Database::getInstance()->getDatabase()->executeGeneric("setCapeOwned", ["uuid" => $player->getUniqueId()->__toString(), "cape_owned" => $result], null, fn (SqlError $err) => Server::getInstance()->getLogger()->error(Core::PREFIX . Core::ARROW . $err->getMessage()));
 	}
 
@@ -129,9 +131,9 @@ class Capes {
 		}, fn (SqlError $err) => Server::getInstance()->getLogger()->error(Core::PREFIX . Core::ARROW . $err->getMessage()));
 	}
 
-	public function setTag(Player $player, int $cape_name) : void{
-		Database::getInstance()->getDatabase()->executeGeneric("setCape", ["uuid" => $player->getUniqueId()->__toString(), "cape_name" => $tag_id], null, fn (SqlError $err) => Server::getInstance()->getLogger()->error(Core::PREFIX . Core::ARROW . $err->getMessage()));
-		$player->setCape($cape_name);
+	public function setCape(Player $player, string $cape_name) : void{
+		Database::getInstance()->getDatabase()->executeGeneric("setCape", ["uuid" => $player->getUniqueId()->__toString(), "cape_name" => $cape_name], null, fn (SqlError $err) => Server::getInstance()->getLogger()->error(Core::PREFIX . Core::ARROW . $err->getMessage()));
+		$player->setSkinCape($cape_name);
 	}
 
 	public static function checkIfHasCape(Player $player) : void {
