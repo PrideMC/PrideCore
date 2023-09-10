@@ -258,6 +258,7 @@ class Player extends \pocketmine\player\Player
 	public function setTempMute(int $duration = 1200){
 		$this->setMuted(true);
 		Core::getInstance()->getScheduler()->scheduleDelayedTask(new ClosureTask(function(){
+			if(!$this->isMuted()) return;
 			$this->setMuted(false);
 			$this->sendMessage(Core::PREFIX . " " . Core::ARROW . " " . TF::GREEN . "You're now unmuted. You can now able to chat and interact with other people.");
 		}), $duration); // secret method ;)

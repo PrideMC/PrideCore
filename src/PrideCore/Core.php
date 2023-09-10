@@ -76,7 +76,6 @@ use PrideCore\Commands\Staff\MaintenanceCommand;
 use PrideCore\Commands\Staff\MuteCommand;
 use PrideCore\Commands\Staff\PardonCommand;
 use PrideCore\Commands\Staff\RankCommand;
-use PrideCore\Commands\Staff\TempMuteCommand;
 use PrideCore\Commands\Staff\WarnCommand;
 use PrideCore\Events\PlayerListener;
 use PrideCore\Events\ServerListener;
@@ -89,7 +88,7 @@ use PrideCore\Tasks\ScoreboardUpdateTask;
 use PrideCore\Utils\Cache;
 use PrideCore\Utils\Config;
 use PrideCore\Utils\Database;
-use PrideCore\Utils\Discord;
+use PrideCore\Discord\DiscordWebhook;
 use PrideCore\Utils\Rank;
 use PrideCore\Utils\Utils;
 use function basename;
@@ -142,14 +141,14 @@ class Core extends PluginBase
 		$this->setWorldTime();
 		$this->disableEmoteMessages();
 		$this->checkServerhasInternet();
-		Discord::getInstance()->sendEnabled();
+		DiscordWebhook::getInstance()->sendEnabled();
 		//$this->registerBlocks();
 	}
 
 	protected function onDisable() : void
 	{
 		Database::getInstance()->close();
-		Discord::getInstance()->sendDisabled();
+		DiscordWebhook::getInstance()->sendDisabled();
 	}
 
 	private function loadPersona() : void {
@@ -233,7 +232,6 @@ class Core extends PluginBase
 			new NicknameCommand(),
 			new LockerCommand(),
 			new SettingsCommand(),
-			new TempMuteCommand(),
 		]);
 	}
 

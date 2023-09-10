@@ -28,7 +28,7 @@
 
 declare(strict_types=1);
 
-namespace PrideCore\Utils;
+namespace PrideCore\Discord;
 
 use CortexPE\DiscordWebhookAPI\Embed;
 use CortexPE\DiscordWebhookAPI\Message;
@@ -39,7 +39,7 @@ use PrideCore\Core;
 /**
  * Discord Webhook related functions.
  */
-class Discord
+class DiscordWebhook
 {
 	use SingletonTrait;
 
