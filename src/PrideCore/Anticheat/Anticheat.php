@@ -35,8 +35,10 @@ use pocketmine\block\BlockTypeIds;
 use pocketmine\math\Vector3;
 use pocketmine\utils\TextFormat as TF;
 use PrideCore\Anticheat\Modules\Flight;
+use PrideCore\Anticheat\Modules\Glitch;
 use PrideCore\Anticheat\Modules\Instabreak;
 use PrideCore\Anticheat\Modules\Killaura;
+use PrideCore\Anticheat\Modules\NoClip;
 use PrideCore\Anticheat\Modules\NoPacket;
 use PrideCore\Anticheat\Modules\Reach;
 use PrideCore\Anticheat\Modules\Timer;
@@ -51,7 +53,7 @@ abstract class Anticheat {
 	public const BADPACKET_HACK = "Bad packet recieved.";
 	public const NOPACKET_HACK = "No packet recieved.";
 	public const AUTOCLICKER_HACK = "Too high packet recieved.";
-	public const XTRAY_HACK = "X-Tray detected.";
+	public const NOCLIP_HACK = "Invalid block actor packet.";
 	public const VELOCITY_HACK = "Velocity knockback detected.";
 	public const TIMER_HACK = "Bad player ticks recieved.";
 	public const REACH_HACK = "Invalid entity distance hit recieved.";
@@ -66,7 +68,7 @@ abstract class Anticheat {
 	public const REACH = 0;
 	public const SPEED = 1;
 	public const AUTOCLICKER = 2;
-	public const XTRAY = 3;
+	public const NOCLIP = 3;
 	public const VELOCITY = 4;
 	public const TIMER = 5;
 	public const KILLAURA = 6;
@@ -122,8 +124,8 @@ abstract class Anticheat {
 			case Anticheat::AUTOCLICKER:
 				return "AutoClicker";
 				break;
-			case Anticheat::XTRAY:
-				return "X-Tray";
+			case Anticheat::NOCLIP:
+				return "NoClip or Phase";
 				break;
 			case Anticheat::VELOCITY:
 				return "Velocity";
@@ -134,8 +136,8 @@ abstract class Anticheat {
 			case Anticheat::KILLAURA:
 				return "Killaura";
 				break;
-			case Anticheat::OMNISPRINT:
-				return "Omni-sprint";
+			case Anticheat::GLITCH:
+				return "Glitching";
 				break;
 			case Anticheat::FLIGHT:
 				return "Flight";
@@ -169,8 +171,8 @@ abstract class Anticheat {
 			case Anticheat::AUTOCLICKER:
 				return Anticheat::AUTOCLICKER_HACK;
 				break;
-			case Anticheat::XTRAY:
-				return Anticheat::XTRAY_HACK;
+			case Anticheat::NOCLIP:
+				return Anticheat::NOCLIP_HACK;
 				break;
 			case Anticheat::VELOCITY:
 				return Anticheat::VELOCITY_HACK;
@@ -181,8 +183,8 @@ abstract class Anticheat {
 			case Anticheat::KILLAURA:
 				return Anticheat::KILLAURA_HACK;
 				break;
-			case Anticheat::OMNISPRINT:
-				return Anticheat::OMNISPRINT_HACK;
+			case Anticheat::GLITCH:
+				return Anticheat::GLITCH_HACK;
 				break;
 			case Anticheat::FLIGHT:
 				return Anticheat::FLIGHT_HACK;
@@ -253,6 +255,8 @@ abstract class Anticheat {
 		(new Reach());
 		(new Killaura());
 		(new Flight());
+		(new NoClip());
+		(new Glitch());
 		(new Instabreak());
 		(new NoPacket());
 		(new Timer());

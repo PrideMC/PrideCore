@@ -9,10 +9,17 @@ use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\math\Vector3;
 use pocketmine\player\GameMode;
 use PrideCore\Anticheat\Anticheat;
+use PrideCore\Core;
 use PrideCore\Player\Player;
 
 class NoClip extends Anticheat implements Listener
 {
+
+    public function __construct()
+    {
+        parent::__construct(Anticheat::NOCLIP);
+        Core::getInstance()->getServer()->getPluginManager()->registerEvents($this, Core::getInstance());
+    }
 
     private array $lastMoveUpdates = [];
 
