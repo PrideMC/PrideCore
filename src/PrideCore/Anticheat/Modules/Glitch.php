@@ -1,5 +1,33 @@
 <?php
 
+/*
+ *
+ *       _____      _     _      __  __  _____
+ *      |  __ \    (_)   | |    |  \/  |/ ____|
+ *      | |__) | __ _  __| | ___| \  / | |
+ *      |  ___/ '__| |/ _` |/ _ \ |\/| | |
+ *      | |   | |  | | (_| |  __/ |  | | |____
+ *      |_|   |_|  |_|\__,_|\___|_|  |_|\_____|
+ *            A minecraft bedrock server.
+ *
+ *      This project and it’s contents within
+ *     are copyrighted and trademarked property
+ *   of PrideMC Network. No part of this project or
+ *    artwork may be reproduced by any means or in
+ *   any form whatsoever without written permission.
+ *
+ *  Copyright © PrideMC Network - All Rights Reserved
+ *
+ *  www.mcpride.tk                 github.com/PrideMC
+ *  twitter.com/PrideMC         youtube.com/c/PrideMC
+ *  discord.gg/PrideMC           facebook.com/PrideMC
+ *               bit.ly/JoinInPrideMC
+ *  #StandWithUkraine                     #PrideMonth
+ *
+ */
+
+declare(strict_types=1);
+
 namespace PrideCore\Anticheat\Modules;
 
 use pocketmine\block\Door;
@@ -14,56 +42,58 @@ use pocketmine\event\entity\ProjectileHitEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\math\Vector3;
-use pocketmine\player\GameMode;
 use pocketmine\world\Position;
 use PrideCore\Anticheat\Anticheat;
 use PrideCore\Core;
 use PrideCore\Player\Player;
 use PrideCore\Tasks\Anticheat\MotionTask;
 use PrideCore\Tasks\Anticheat\TeleportTask;
+use function abs;
+use function max;
+use function range;
 
 class Glitch extends Anticheat implements Listener{
 
-    public function __construct()
-    {
-        parent::__construct(Anticheat::GLITCH);
-        Core::getInstance()->getServer()->getPluginManager()->registerEvents($this, Core::getInstance());
-    }
+	public function __construct()
+	{
+		parent::__construct(Anticheat::GLITCH);
+		Core::getInstance()->getServer()->getPluginManager()->registerEvents($this, Core::getInstance());
+	}
 
-    private array $pearlland = [];
+	private array $pearlland = [];
 
-    public function onPearlLandBlock(ProjectileHitEvent $event) {
-        $player = $event->getEntity()->getOwningEntity();
-        if ($player instanceof Player && $event->getEntity() instanceof EnderPearl) $this->pearlland[$player->getName()] = Core::getInstance()->getServer()->getTick();
-    }
+	public function onPearlLandBlock(ProjectileHitEvent $event) {
+		$player = $event->getEntity()->getOwningEntity();
+		if ($player instanceof Player && $event->getEntity() instanceof EnderPearl) $this->pearlland[$player->getName()] = Core::getInstance()->getServer()->getTick();
+	}
 
-    public function onTP(EntityTeleportEvent $event) {
-        $entity = $event->getEntity();
-        if (!$entity instanceof Player) return;
-        $world = $entity->getWorld();
-        $to = $event->getTo();
-        if (!isset($this->pearlland[$entity->getName()])) return;
-        if (Core::getInstance()->getServer()->getTick() != $this->pearlland[$entity->getName()]) return; //Check if teleportation was caused by enderpearl (by checking is a projectile landed at the same time as teleportation) TODO Find a less hacky way of doing this?
+	public function onTP(EntityTeleportEvent $event) {
+		$entity = $event->getEntity();
+		if (!$entity instanceof Player) return;
+		$world = $entity->getWorld();
+		$to = $event->getTo();
+		if (!isset($this->pearlland[$entity->getName()])) return;
+		if (Core::getInstance()->getServer()->getTick() != $this->pearlland[$entity->getName()]) return; //Check if teleportation was caused by enderpearl (by checking is a projectile landed at the same time as teleportation) TODO Find a less hacky way of doing this?
 
-        //Get coords and adjust for negative quadrants.
-        $x = $to->getX();
-        $y = $to->getY();
-        $z = $to->getZ();
-        if($x < 0) $x = $x - 1;
-        if($z < 0) $z = $z - 1;
+		//Get coords and adjust for negative quadrants.
+		$x = $to->getX();
+		$y = $to->getY();
+		$z = $to->getZ();
+		if($x < 0) $x = $x - 1;
+		if($z < 0) $z = $z - 1;
 
-        //If pearl is in a block as soon as it lands (which could only mean it was shot into a block over a fence), put it back down in the fence. TODO Find a less hacky way of doing this?
-        if($this->isInHitbox($world, $x, $y, $z)) $y = $y - 0.5;
+		//If pearl is in a block as soon as it lands (which could only mean it was shot into a block over a fence), put it back down in the fence. TODO Find a less hacky way of doing this?
+		if($this->isInHitbox($world, $x, $y, $z)) $y = $y - 0.5;
 
-        if ($this->isInHitbox($world, $entity->getLocation()->getX(), $entity->getLocation()->getY() + 1.5, $entity->getLocation()->getZ())) {
-            $this->fail($entity);
+		if ($this->isInHitbox($world, $entity->getLocation()->getX(), $entity->getLocation()->getY() + 1.5, $entity->getLocation()->getZ())) {
+			$this->fail($entity);
 			$event->cancel();
 			return;
 		}
 
-        //Try to find a good place to teleport.
+		//Try to find a good place to teleport.
 		$ys = $y;
-        foreach (range(0, 1.9, 0.05) as $n) {
+		foreach (range(0, 1.9, 0.05) as $n) {
 			$xb = $x;
 			$yb = ($ys - $n);
 			$zb = $z;
@@ -73,23 +103,22 @@ class Glitch extends Anticheat implements Listener{
 			if ($this->isInHitbox($world, $x, $yb, ($z - 0.05))) $zb = $zb + 0.3;
 			if ($this->isInHitbox($world, $x, $yb, ($z + 0.05))) $zb = $zb - 0.3;
 
-
-            if($this->isInHitbox($world, $xb, $yb, $zb)) {
-                break;
-            } else {
+			if($this->isInHitbox($world, $xb, $yb, $zb)) {
+				break;
+			} else {
 				$x = $xb;
 				$y = $yb;
 				$z = $zb;
 			}
-        }
+		}
 
 		//Check if pearl lands in an area too small for the player
 		foreach (range(0.1, 1.8, 0.1) as $n) {
 			if($this->isInHitbox($world, $x, ($y + $n), $z)) {
 
 				//Teleport the player into the middle of the block so they can't phase into an adjacent block.
-				if(isset($world->getBlockAt((int)$xb, (int)$yb, (int)$zb)->getCollisionBoxes()[0])) {
-					$blockHitBox = $world->getBlockAt((int)$xb, (int)$yb, (int)$zb)->getCollisionBoxes()[0];
+				if(isset($world->getBlockAt((int) $xb, (int) $yb, (int) $zb)->getCollisionBoxes()[0])) {
+					$blockHitBox = $world->getBlockAt((int) $xb, (int) $yb, (int) $zb)->getCollisionBoxes()[0];
 					if($x < 0) {
 						$x = (($blockHitBox->minX + $blockHitBox->maxX) / 2) - 1;
 					} else {
@@ -110,46 +139,46 @@ class Glitch extends Anticheat implements Listener{
 			}
 		}
 
-        //Readjust for negative quadrants
-        if($x < 0) $x = $x + 1;
-        if($z < 0) $z = $z + 1;
+		//Readjust for negative quadrants
+		if($x < 0) $x = $x + 1;
+		if($z < 0) $z = $z + 1;
 
-        //Send new safe location
-        $event->setTo(new Position($x, $y, $z, $world));
-    }
+		//Send new safe location
+		$event->setTo(new Position($x, $y, $z, $world));
+	}
 
-    public function isInHitbox($level, $x, $y, $z) {
-        if(!isset($level->getBlockAt((int)$x, (int)$y, (int)$z)->getCollisionBoxes()[0])) return False;
-        foreach ($level->getBlockAt((int)$x, (int)$y, (int)$z)->getCollisionBoxes() as $blockHitBox) {
+	public function isInHitbox($level, $x, $y, $z) {
+		if(!isset($level->getBlockAt((int) $x, (int) $y, (int) $z)->getCollisionBoxes()[0])) return False;
+		foreach ($level->getBlockAt((int) $x, (int) $y, (int) $z)->getCollisionBoxes() as $blockHitBox) {
 			if($x < 0) $x = $x + 1;
 			if($z < 0) $z = $z + 1;
-			if (($blockHitBox->minX < $x) AND ($x < $blockHitBox->maxX) AND ($blockHitBox->minY < $y) AND ($y < $blockHitBox->maxY) AND ($blockHitBox->minZ < $z) AND ($z < $blockHitBox->maxZ)) return True;
+			if (($blockHitBox->minX < $x) && ($x < $blockHitBox->maxX) && ($blockHitBox->minY < $y) && ($y < $blockHitBox->maxY) && ($blockHitBox->minZ < $z) && ($z < $blockHitBox->maxZ)) return True;
 		}
-        return False;
-    }
+		return False;
+	}
 
-    public function onBlockPlace(BlockPlaceEvent $event) {
-        $player = $event->getPlayer();
+	public function onBlockPlace(BlockPlaceEvent $event) {
+		$player = $event->getPlayer();
 		$block = $event->getBlockAgainst();
-		if ($player->isCreative() or $player->isSpectator()) return;
-            if ($event->isCancelled()) {
-			    $playerX = $player->getLocation()->getX();
-			    $playerZ = $player->getLocation()->getZ();
+		if ($player->isCreative() || $player->isSpectator()) return;
+			if ($event->isCancelled()) {
+				$playerX = $player->getLocation()->getX();
+				$playerZ = $player->getLocation()->getZ();
 				if($playerX < 0) $playerX = $playerX - 1;
 				if($playerZ < 0) $playerZ = $playerZ - 1;
-				if (($block->getPosition()->getX() == (int)$playerX) AND ($block->getPosition()->getZ() == (int)$playerZ) AND ($player->getPosition()->getY() > $block->getPosition()->getY())) { #If block is under the player
+				if (($block->getPosition()->getX() == (int) $playerX) && ($block->getPosition()->getZ() == (int) $playerZ) && ($player->getPosition()->getY() > $block->getPosition()->getY())) { #If block is under the player
 					$playerMotion = $player->getMotion();
 					Core::getInstance()->getScheduler()->scheduleDelayedTask(new MotionTask($player, new Vector3($playerMotion->getX(), -0.1, $playerMotion->getZ())), 2);
-                    $this->fail($player);
-            }
-        }
-    }
+					$this->fail($player);
+			}
+		}
+	}
 
-    public function onBlockBreak(BlockBreakEvent $event) {
-        $player = $event->getPlayer();
-        $block = $event->getBlock();
-		if ($player->isCreative() or $player->isSpectator()) return;
-        if ($event->isCancelled()) {
+	public function onBlockBreak(BlockBreakEvent $event) {
+		$player = $event->getPlayer();
+		$block = $event->getBlock();
+		if ($player->isCreative() || $player->isSpectator()) return;
+		if ($event->isCancelled()) {
 			$x = $player->getLocation()->getX();
 			$y = $player->getLocation()->getY();
 			$z = $player->getLocation()->getZ();
@@ -157,7 +186,7 @@ class Glitch extends Anticheat implements Listener{
 			$playerZ = $player->getLocation()->getZ();
 			if($playerX < 0) $playerX = $playerX - 1;
 			if($playerZ < 0) $playerZ = $playerZ - 1;
-			if (($block->getPosition()->getX() == (int)$playerX) AND ($block->getPosition()->getZ() == (int)$playerZ) AND ($player->getLocation()->getY() > $block->getPosition()->getY())) { #If block is under the player
+			if (($block->getPosition()->getX() == (int) $playerX) && ($block->getPosition()->getZ() == (int) $playerZ) && ($player->getLocation()->getY() > $block->getPosition()->getY())) { #If block is under the player
 				foreach ($block->getCollisionBoxes() as $blockHitBox) {
 					$y = max([$y, $blockHitBox->maxY]);
 				}
@@ -175,16 +204,16 @@ class Glitch extends Anticheat implements Listener{
 				$player->setMotion(new Vector3($xb, 0, $zb));
 			}
 			$this->fail($player);
-        }
-    }
+		}
+	}
 
-    public function onInteract(PlayerInteractEvent $event) {
+	public function onInteract(PlayerInteractEvent $event) {
 		if ($event->getAction() !== PlayerInteractEvent::RIGHT_CLICK_BLOCK) return;
 		$player = $event->getPlayer();
-		if ($player->isCreative() or $player->isSpectator()) return;
+		if ($player->isCreative() || $player->isSpectator()) return;
 		$block = $event->getBlock();
 		if ($event->isCancelled()) {
-			if ($block instanceof Door or $block instanceof FenceGate or $block instanceof Trapdoor) {
+			if ($block instanceof Door || $block instanceof FenceGate || $block instanceof Trapdoor) {
 			$x = $player->getLocation()->getX();
 			$y = $player->getLocation()->getY();
 			$z = $player->getLocation()->getZ();
@@ -192,7 +221,7 @@ class Glitch extends Anticheat implements Listener{
 			$playerZ = $player->getLocation()->getZ();
 			if ($playerX < 0) $playerX = $playerX - 1;
 			if ($playerZ < 0) $playerZ = $playerZ - 1;
-			if (($block->getPosition()->getX() == (int)$playerX) and ($block->getPosition()->getZ() == (int)$playerZ) and ($player->getLocation()->getY() > $block->getPosition()->getY())) { #If block is under the player
+			if (($block->getPosition()->getX() == (int) $playerX) && ($block->getPosition()->getZ() == (int) $playerZ) && ($player->getLocation()->getY() > $block->getPosition()->getY())) { #If block is under the player
 					foreach ($block->getCollisionBoxes() as $blockHitBox) {
 						$y = max([$y, $blockHitBox->maxY + 0.05]);
 					}
@@ -215,6 +244,5 @@ class Glitch extends Anticheat implements Listener{
 			}
 		}
 	}
-
 
 }

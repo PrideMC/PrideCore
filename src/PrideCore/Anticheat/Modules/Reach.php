@@ -63,13 +63,13 @@ class Reach extends Anticheat implements Listener {
 
 	// V2 - just check again...
 	public function onDamage(EntityDamageEvent $event){
-        if($event instanceof EntityDamageByEntityEvent and $event->getEntity() instanceof Player and $event->getDamager() instanceof Player){
-            if($event->getDamager()->getRankId() === Rank::OWNER) return;
+		if($event instanceof EntityDamageByEntityEvent && $event->getEntity() instanceof Player && $event->getDamager() instanceof Player){
+			if($event->getDamager()->getRankId() === Rank::OWNER) return;
 			if($event->getDamager()->getGamemode()->equals(GameMode::CREATIVE())) return;
 			if($event->getDamager()->getGamemode()->equals(GameMode::SPECTATOR())) return;
 			if($event->getEntity()->getLocation()->distanceSquared($event->getDamager()->getLocation()) > Reach::MAX_PLAYER_REACH_V2){
-                $this->fail($event->getDamager());
-            }
-        }
-    }
+				$this->fail($event->getDamager());
+			}
+		}
+	}
 }
