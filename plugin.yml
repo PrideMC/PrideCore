@@ -1,6 +1,6 @@
 ---
 name: PrideCore
-version: 4.0
+version: 5.0
 main: PrideCore\Core
 author: PrideMC
 api: 5.0.0
