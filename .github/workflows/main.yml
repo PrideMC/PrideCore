@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         image: [ubuntu-latest]
-        php: [8.0.23, 8.1.10, 8.2.0, 8.3.0]
+        php: [8.1, 8.2]
 
     steps:
       - name: Build and prepare PHP cache
@@ -69,7 +69,7 @@ jobs:
       fail-fast: false
       matrix:
         image: [ubuntu-latest]
-        php: [8.0.23, 8.1.10, 8.2.0, 8.3.0]
+        php: [8.1, 8.2]
 
     steps:
       - uses: actions/checkout@v3
@@ -107,7 +107,7 @@ jobs:
       fail-fast: false
       matrix:
         image: [ubuntu-latest]
-        php: [8.0.23, 8.1.10, 8.2.0, 8.3.0]
+        php: [8.1, 8.2]
 
     steps:
       - uses: actions/checkout@v3
@@ -151,8 +151,8 @@ jobs:
       - name: Setup PHP and tools
         uses: shivammathur/setup-php@2.21.2
         with:
-          php-version: 8.0
-          tools: php-cs-fixer:3.11
+          php-version: 8.1
+          tools: php-cs-fixer:3.26
 
       - name: Run PHP-CS-Fixer
         run: php-cs-fixer fix --dry-run --diff --ansi
@@ -166,7 +166,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3  
       - name: Build and prepare PHP cache
-        uses: pmmp/setup-php-action@latest
+        uses: pmmp/setup-php-action@2.0.0
         with:
           php-version: ${{ matrix.php }}
           install-path: "./bin"  
