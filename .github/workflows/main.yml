@@ -30,7 +30,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image: ubuntu-latest
+        image: [ubuntu-latest]
         php: [8.0.23, 8.1.10, 8.2.0, 8.3.0]
 
     steps:
