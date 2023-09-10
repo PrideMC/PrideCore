@@ -1,195 +1,31 @@
-name: CI
-
-on:
-  push:
-  pull_request:
-  workflow_dispatch:
-
+name: Build phar package.
+run-name: Build phar package with build.php
+on: [push,workflow_dispatch,pull]
 jobs:
-  build-php:
-    name: Prepare PHP
-    runs-on: ${{ matrix.image }}
-
-    strategy:
-      matrix:
-        image: [ubuntu-latest]
-        php: [8.1, 8.2]
-
-    steps:
-      - name: Build and prepare PHP cache
-        uses: pmmp/setup-php-action@2.0.0
-        with:
-          php-version: ${{ matrix.php }}
-          install-path: "./bin"
-
-  phpstan:
-    name: PHPStan analysis
-    needs: build-php
-    runs-on: ${{ matrix.image }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        image: [ubuntu-latest]
-        php: [8.0.23, 8.1.10, 8.2.0, 8.3.0]
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup PHP
-        uses: pmmp/setup-php-action@2.0.0
-        with:
-          php-version: ${{ matrix.php }}
-          install-path: "./bin"
-
-      - name: Install Composer
-        run: curl -sS https://getcomposer.org/installer | php
-
-      - name: Restore Composer package cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/composer/files
-            ~/.cache/composer/vcs
-          key: "composer-v2-cache-${{ matrix.php }}-${{ hashFiles('./composer.lock') }}"
-          restore-keys: |
-            composer-v2-cache-
-
-      - name: Install Composer dependencies
-        run: php composer.phar install --prefer-dist --no-interaction
-
-      - name: Run PHPStan
-        run: ./vendor/bin/phpstan analyze --no-progress --memory-limit=2G
-
-  phpunit:
-    name: PHPUnit tests
-    needs: build-php
-    runs-on: ${{ matrix.image }}
-    strategy:
-      fail-fast: false
-      matrix:
-        image: [ubuntu-latest]
-        php: [8.1, 8.2]
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup PHP
-        uses: pmmp/setup-php-action@2.0.0
-        with:
-          php-version: ${{ matrix.php }}
-          install-path: "./bin"
-
-      - name: Install Composer
-        run: curl -sS https://getcomposer.org/installer | php
-
-      - name: Restore Composer package cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/composer/files
-            ~/.cache/composer/vcs
-          key: "composer-v2-cache-${{ matrix.php }}-${{ hashFiles('./composer.lock') }}"
-          restore-keys: |
-            composer-v2-cache-
-
-      - name: Install Composer dependencies
-        run: php composer.phar install --prefer-dist --no-interaction
-
-      - name: Run PHPUnit tests
-        run: ./vendor/bin/phpunit --bootstrap vendor/autoload.php --fail-on-warning tests/phpunit
-
-  codegen:
-    name: Generated Code consistency checks
-    needs: build-php
-    runs-on: ${{ matrix.image }}
-    strategy:
-      fail-fast: false
-      matrix:
-        image: [ubuntu-latest]
-        php: [8.1, 8.2]
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup PHP
-        uses: pmmp/setup-php-action@2.0.0
-        with:
-          php-version: ${{ matrix.php }}
-          install-path: "./bin"
-
-      - name: Install Composer
-        run: curl -sS https://getcomposer.org/installer | php
-
-      - name: Restore Composer package cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/composer/files
-            ~/.cache/composer/vcs
-          key: "composer-v2-cache-${{ matrix.php }}-${{ hashFiles('./composer.lock') }}"
-          restore-keys: |
-            composer-v2-cache-
-
-      - name: Install Composer dependencies
-        run: php composer.phar install --no-dev --prefer-dist --no-interaction
-
-      - name: Verify code is unchanged
-        run: |
-          git diff
-          git diff --quiet
-
-  codestyle:
-    name: Code Style checks
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup PHP and tools
-        uses: shivammathur/setup-php@2.21.2
-        with:
-          php-version: 8.1
-          tools: php-cs-fixer:3.26
-
-      - name: Run PHP-CS-Fixer
-        run: php-cs-fixer fix --dry-run --diff --ansi
-
-  build:
-    name: Build Artifact
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-    
-    steps:
-      - uses: actions/checkout@v3  
-      - name: Build and prepare PHP cache
-        uses: pmmp/setup-php-action@2.0.0
-        with:
-          php-version: ${{ matrix.php }}
-          install-path: "./bin"  
-      - name: Install Composer
-        run: curl -sS https://getcomposer.org/installer | php
-      - name: Restore Composer package cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/composer/files
-            ~/.cache/composer/vcs
-          key: "composer-v2-cache-${{ matrix.php }}-${{ hashFiles('./composer.lock') }}"
-          restore-keys: |
-            composer-v2-cache-
-
-      - name: Install Composer dependencies
-        run: php composer.phar install --no-dev --prefer-dist --no-interaction
-        
-      - name: Build phar
-        run: php tools/build.php
-        
-      - name: Upload build information artifact.
-        uses: actions/upload-artifact@v3
-        with:
+ build-phar:
+   runs-on: ubuntu-latest
+   steps:
+     - name: Checkout the repository.
+       uses: actions/checkout@v3
+     - name: Download php-binaries.
+       run: "curl -sL https://github.com/pmmp/PHP-Binaries/releases/latest/download/PHP-Linux-x86_64-PM5.tar.gz -o php.tar.gz"
+     - name: Extract php-binaries.
+       run: "tar -xvzf php.tar.gz"
+     - name: chmod the php-binaries.
+       run: "chmod +x ./bin/php7/bin/php"
+     - name: Fix opcache.so
+       run: EXTENSION_DIR=$(find "$(pwd)/bin" -name "*debug-zts*") \
+            grep -q '^extension_dir' bin/php7/bin/php.ini && sed -i'bak' "s{^extension_dir=.*{extension_dir=\"$EXTENSION_DIR\"{" bin/php7/bin/php.ini || echo "extension_dir=\"$EXTENSION_DIR\"" >> bin/php7/bin/php.ini
+     - name: Install php-cs-fixer.
+       run: "curl -sL https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/releases/latest/download/php-cs-fixer.phar -o php-cs-fixer.phar"
+     - name: Run php-cs-fixer.
+       run: "./bin/php7/bin/php php-cs-fixer.phar fix src"
+     - name: Run build.php
+       run: "./bin/php7/bin/php -dphar.readonly=0 tools/build.php"
+     - name: Upload build artifact
+       uses: actions/upload-artifact@v3
+       with:
           name: PrideCore.phar
           path: PrideCore.phar
+     - name: Codespace Cleanup
+       run: "rm -rf *"
