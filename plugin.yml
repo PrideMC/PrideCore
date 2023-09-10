@@ -1,0 +1,11 @@
+---
+name: PrideCore
+version: 4.0
+main: PrideCore\Core
+author: PrideMC
+api: 5.0.0
+description: A official organization plugin for minecraft bedrock edition server.
+website: https://github.com/PrideMC
+extensions: ["gd", "sqlite3", "mysqli"]
+load: STARTUP
+...

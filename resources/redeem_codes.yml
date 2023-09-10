@@ -1,0 +1,7 @@
+---
+# Redeem Codes
+# You can put here a redeem codes do you want to create.
+# for direct creating use /redeem create <code> <item>
+# to remove a code here just /redeem remove <code>
+redeem_codes: []
+...

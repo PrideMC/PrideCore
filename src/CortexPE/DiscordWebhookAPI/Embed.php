@@ -1,0 +1,109 @@
+<?php
+
+/*
+ *
+ *       _____      _     _      __  __  _____
+ *      |  __ \    (_)   | |    |  \/  |/ ____|
+ *      | |__) | __ _  __| | ___| \  / | |
+ *      |  ___/ '__| |/ _` |/ _ \ |\/| | |
+ *      | |   | |  | | (_| |  __/ |  | | |____
+ *      |_|   |_|  |_|\__,_|\___|_|  |_|\_____|
+ *            A minecraft bedrock server.
+ *
+ *      This project and it’s contents within
+ *     are copyrighted and trademarked property
+ *   of PrideMC Network. No part of this project or
+ *    artwork may be reproduced by any means or in
+ *   any form whatsoever without written permission.
+ *
+ *  Copyright © PrideMC Network - All Rights Reserved
+ *
+ *  www.mcpride.tk                 github.com/PrideMC
+ *  twitter.com/PrideMC         youtube.com/c/PrideMC
+ *  discord.gg/PrideMC           facebook.com/PrideMC
+ *               bit.ly/JoinInPrideMC
+ *  #StandWithUkraine                     #PrideMonth
+ *
+ */
+
+declare(strict_types = 1);
+
+namespace CortexPE\DiscordWebhookAPI;
+
+use DateTime;
+use DateTimeZone;
+
+class Embed {
+	/** @var array */
+	protected $data = [];
+
+	public function asArray() : array{
+		// Why doesn't PHP have a `__toArray()` magic method??? This would've been better.
+		return $this->data;
+	}
+
+	public function setAuthor(string $name, string $url = null, string $iconURL = null) : void{
+		if(!isset($this->data["author"])){
+			$this->data["author"] = [];
+		}
+		$this->data["author"]["name"] = $name;
+		if($url !== null){
+			$this->data["author"]["url"] = $url;
+		}
+		if($iconURL !== null){
+			$this->data["author"]["icon_url"] = $iconURL;
+		}
+	}
+
+	public function setTitle(string $title) : void{
+		$this->data["title"] = $title;
+	}
+
+	public function setDescription(string $description) : void{
+		$this->data["description"] = $description;
+	}
+
+	public function setColor(int $color) : void{
+		$this->data["color"] = $color;
+	}
+
+	public function addField(string $name, string $value, bool $inline = false) : void{
+		if(!isset($this->data["fields"])){
+			$this->data["fields"] = [];
+		}
+		$this->data["fields"][] = [
+			"name" => $name,
+			"value" => $value,
+			"inline" => $inline,
+		];
+	}
+
+	public function setThumbnail(string $url) : void{
+		if(!isset($this->data["thumbnail"])){
+			$this->data["thumbnail"] = [];
+		}
+		$this->data["thumbnail"]["url"] = $url;
+	}
+
+	public function setImage(string $url) : void{
+		if(!isset($this->data["image"])){
+			$this->data["image"] = [];
+		}
+		$this->data["image"]["url"] = $url;
+	}
+
+	public function setFooter(string $text, string $iconURL = null) : void{
+		if(!isset($this->data["footer"])){
+			$this->data["footer"] = [];
+		}
+		$this->data["footer"]["text"] = $text;
+		if($iconURL !== null){
+			$this->data["footer"]["icon_url"] = $iconURL;
+		}
+	}
+
+	public function setTimestamp(DateTime $timestamp) : void{
+		$timestamp->setTimezone(new DateTimeZone("UTC"));
+		$this->data["timestamp"] = $timestamp->format("Y-m-d\TH:i:s.v\Z");
+	}
+}

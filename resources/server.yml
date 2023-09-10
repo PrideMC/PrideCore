@@ -1,0 +1,35 @@
+---
+broadcastMessages:
+    - "{PREFIX} {ARROW} &eThank you for joining in our server!"
+    - "{PREFIX} {ARROW} &eSupport us by using &d/vote &eand recieve rewards!"
+    - "{PREFIX} {ARROW} &eWant to apply builder? &bCome us by using &d/links &band open the builder link application on your browser!"
+    - "{PREFIX} {ARROW} &aNew Incoming Events and Seasonal Updates are coming!"
+    - "{PREFIX} {ARROW} &bDo you found a glitch/bug? Report us by using &d/report&b!"
+motd:
+    - "{PREFIX} {ARROW}  &bSeason v4"
+    - "{PREFIX} {ARROW}  &ePirate Update"
+    - "{PREFIX} {ARROW}  &dPractice Server"
+    - "{PREFIX} {ARROW}  &aVote Us!"
+maintenance-motd: "{PREFIX} {ARROW}  &cMaintenance Mode"
+resource-packs:
+    22f2f484-706e-c415-02eb-e6e89da3babd: 7gQ0owaYKrWyAYeuJr6zAOP3sSVmzp5R # https://github.com/PrideMC/PridePack
+serverStatus: offline # change it if on ready production...
+maintenanceBypass:
+    - xqwtxon # staff and admin teams?
+# VPN Check
+vpn:
+    api-key: "608361442de944f2888da8c7514d4da0"
+# Discord Webhook
+discord:
+    webhook: "https://discord.com/api/webhooks/945508779137597470/nPooE0vSxD_X0QkdVlNJZOrZg2vaFNIu1LTnFNmpHIF4O89hKUt3BLTQffyjponHiW5P"
+    avatar: "https://cdn.discordapp.com/icons/943673084852981792/c0afb3e87232e2b2791c72e8be5d848c.webp"
+# Ngrok API
+# https://ngrok.com/
+ngrok:
+    api-key: "2UHi9gzyyzeXAr1Lc6wQ2qcCSHU_3AdxkyT8MucJN4q4Jj5fA"
+    user-id: "ak_2UHi9gzyyzeXAr1Lc6wQ2qcCSHU"
+# Boostpad with pressure-plates
+boost-pad:
+    limit: 0.5
+    power: 2.0
+...
