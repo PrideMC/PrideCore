@@ -56,7 +56,7 @@ abstract class Anticheat {
 	public const TIMER_HACK = "Bad player ticks recieved.";
 	public const REACH_HACK = "Invalid entity distance hit recieved.";
 	public const KILLAURA_HACK = "Invalid hit registry recieved.";
-	public const OMNISPRINT_HACK = "Invalid movement.";
+	public const GLITCH_HACK = "Invalid packet.";
 	public const FLIGHT_HACK = "Unexpected movement location packet recieved.";
 	public const INSTABREAK_HACK = "Packet recieved miss-match.";
 	public const CHESTSTEALER_HACK = "Unexpected transaction packet recieved.";
@@ -70,7 +70,7 @@ abstract class Anticheat {
 	public const VELOCITY = 4;
 	public const TIMER = 5;
 	public const KILLAURA = 6;
-	public const OMNISPRINT = 7;
+	public const GLITCH = 7;
 	public const FLIGHT = 8;
 	public const INSTABREAK = 9;
 	public const BADPACKET = 10;

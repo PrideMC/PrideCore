@@ -13,7 +13,7 @@ motd:
 maintenance-motd: "{PREFIX} {ARROW}  &cMaintenance Mode"
 resource-packs:
     22f2f484-706e-c415-02eb-e6e89da3babd: 1oWGsIObwFPlr8mqQMre7dFXNvEClerx # https://github.com/PrideMC/PridePack
-    22f2f58f-706a-c415-02eb-e6e89da3babd: YQkpiQnMoq2aKws9cULTMSemvI5umfxX # https://github.com/PrideMC/PridePack
+    22f2f58f-706a-c415-02eb-e6e89da3babd: YQkpiQnMoq2aKws9cULTMSemvI5umfxX # https://github.com/PrideMC/PridePackRTX
 serverStatus: offline # change it if on ready production...
 maintenanceBypass:
     - xqwtxon # staff and admin teams?
