@@ -31,6 +31,7 @@ declare(strict_types=1);
 namespace PrideCore\Anticheat\Modules;
 
 use pocketmine\event\entity\EntityDamageByEntityEvent;
+use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;
 use pocketmine\player\GameMode;
 use PrideCore\Anticheat\Anticheat;
@@ -41,6 +42,7 @@ use PrideCore\Utils\Rank;
 class Reach extends Anticheat implements Listener {
 
 	public const MAX_PLAYER_REACH = 8.1;
+	public const MAX_PLAYER_REACH_V2 = 4.0;
 
 	public function __construct()
 	{
@@ -55,8 +57,18 @@ class Reach extends Anticheat implements Listener {
 			if($damager->getGamemode()->equals(GameMode::SPECTATOR())) return;
 			if($player->getLocation()->distance($damager->getLocation()) > Reach::MAX_PLAYER_REACH){
 				$this->fail($damager);
-				$event->cancel();
 			}
 		}
 	}
+
+	public function onDamage(EntityDamageEvent $event){
+        if($event instanceof EntityDamageByEntityEvent and $event->getEntity() instanceof Player and $event->getDamager() instanceof Player){
+            if($event->getDamager()->getRankId() === Rank::OWNER) return;
+			if($event->getDamager()->getGamemode()->equals(GameMode::CREATIVE())) return;
+			if($event->getDamager()->getGamemode()->equals(GameMode::SPECTATOR())) return;
+			if($event->getEntity()->getLocation()->distanceSquared($event->getDamager()->getLocation()) > Reach::MAX_PLAYER_REACH_V2){
+                $this->fail($event->getDamager());
+            }
+        }
+    }
 }

@@ -30,16 +30,24 @@ declare(strict_types=1);
 
 namespace PrideCore\Anticheat\Modules;
 
+use pocketmine\entity\effect\VanillaEffects;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\math\Vector3;
+use pocketmine\world\Position;
 use PrideCore\Anticheat\Anticheat;
 use PrideCore\Core;
 
 class Flight extends Anticheat implements Listener{
 
-	public const FLIGHT_MAX_MOVE = 8.0;
+	private $isElevating = [];
+    private $flyTags = [];
+    private $kicks = [];
+    private $speedpoints = [];
 
-	private array $lastLocation = [];
+	public const FLY_TAGS = 5;
+	public const MAX_KICKS = 3;
+	public const MAX_POINTS = 7;
 
 	public function __construct()
 	{
@@ -47,15 +55,99 @@ class Flight extends Anticheat implements Listener{
 		Core::getInstance()->getServer()->getPluginManager()->registerEvents($this, Core::getInstance());
 	}
 
-	public function handleEvent(PlayerMoveEvent $event) : void{
-		if(!($player = $event->getPlayer())->getAllowFlight()){ // improve this soon... most likely a bad code.
-			$this->lastLocation[$player->getUniqueId()->__toString()] = ["x" => $player->getLocation()->getX(), "y" => $player->getLocation()->getY(), "z" => $player->getLocation()->getY()];
-			if(!$player->isFlying() && Anticheat::areAllBlocksAboveAir($player)){
-				if($player->getLocation()->getX() !== $this->lastLocation[$player->getUniqueId()->__toString()]["x"] && $player->getLocation()->getZ() !== $this->lastLocation[$player->getUniqueId()->__toString()]["z"] && $player->getLocation()->getY() === $this->lastLocation[$player->getUniqueId()->__toString()]["y"]){
-					$this->fail($player);
-					$event->cancel();
-				}
+	public function onMove(PlayerMoveEvent $event){
+        $p = $event->getPlayer();
+
+        if($p->isCreative() or $p->isSpectator() or $p->getAllowFlight() or $p->getEffects()->has(VanillaEffects::JUMP_BOOST()) or $p->getRankId() === Rank::OWNER or $p->getRankId() === Rank::STAFF or $p->getRankId() === Rank::ADMIN) return;
+
+        $name = $p->getName();
+        $isAirUnder = Flight::isAirUnder($p->getPosition());
+
+        if(!$isAirUnder){
+            if(isset($this->isElevating[$name])){
+                unset($this->isElevating[$name]);
+            }
+        } else {
+            $fromY = $event->getFrom()->y;
+            $toY = $event->getTo()->y;
+
+            if($toY < $fromY and isset($this->isElevating[$name])){
+                $this->isElevating[$name] -= $fromY - $toY;
+                if($this->isElevating[$name] <= 0){
+                    unset($this->isElevating[$name]);
+                }
+            }
+
+            elseif($toY > $fromY){
+                isset($this->isElevating[$name]) ?
+                    $this->isElevating[$name] += $toY - $fromY
+                    :
+                    $this->isElevating[$name] = $toY - $fromY
+                ;
+
+                if($this->isElevating[$name] > 1.5){
+                    Flight::FLY_TAGS !== -1 and ++$this->flyTags[$name];
+                }
+            }
+
+            elseif(round($fromY, 5) === round($toY, 5)){
+                Flight::FLY_TAGS !== -1 and ++$this->flyTags[$name];
+            }
+
+            $this->fail($p);
+
+        	if($p->getEffects()->has(VanillaEffects::SPEED()) or $p->getRankId() === Rank::OWNER or $p->getRankId() === Rank::STAFF or $p->getRankId() === Rank::ADMIN) return;
+
+        	if(($d = Flight::XZDistanceSquared($event->getFrom(), $event->getTo())) > 1.4){
+        	    ++$this->speedpoints[$name];
+        	}elseif($d > 3){
+        	    isset($this->speedpoints[$name]) ? $this->speedpoints[$name] = 2 : $this->speedpoints[$name] += 2;
+       		}elseif($d > 0){
+        	    $this->speedpoints[$name] -= 1;
+        	}
+
+        	if(isset($this->speedpoints[$name]) and $this->speedpoints[$name] === Flight::MAX_POINTS){
+            	if((isset($this->kicks[$name]) and $this->kicks[$name] < Flight::MAX_KICKS - 1) or !isset($this->kicks[$name])){
+             	   unset($this->speedpoints[$name]);
+              	   ++$this->kicks[$name];
+              	   $this->fail($p);
+            	} else {
+               		unset($this->kicks[$name]);
+            	}
+            	return;
 			}
 		}
 	}
+
+    public static function isAirUnder(Position $pos) : bool{
+        $under = [];
+        $last = [];
+        $y = $pos->y - 1;
+
+        $under[] = $pos->world->getBlockAt($pos->x, $y, $pos->z);
+
+        if(round($pos->x) === floor($pos->x)){
+            $under[] = $pos->world->getBlockAt($pos->x - 1, $y, $pos->z);
+            $last[0] = floor($pos->x) - 1;
+        }elseif(round($pos->x) === ceil($pos->x)){
+            $under[] = $pos->world->getBlockAt($pos->x, $y, $pos->z);
+            $last[0] = ceil($pos->x);
+        }
+
+        if(round($pos->z) === floor($pos->z)){
+            $under[] = $pos->world->getBlockAt($pos->x, $y, $pos->z - 1);
+            $last[1] = floor($pos->z) - 1;
+        }elseif(round($pos->z) === ceil($pos->z)){
+            $under[] = $pos->world->getBlockAt($pos->x, $y, $pos->z);
+            $last[1] = ceil($pos->z);
+        }
+
+        $under[] = $pos->world->getBlockAt($last[0], $y, $last[1]);
+
+        return !array_filter($under);
+    }
+    
+    public static function XZDistanceSquared(Vector3 $v1, Vector3 $v2) : float{
+        return ($v1->x - $v2->x) ** 2 + ($v1->z - $v2->z) ** 2;
+    }
 }
