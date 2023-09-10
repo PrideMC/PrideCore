@@ -258,7 +258,7 @@ class Core extends PluginBase
 			if ($this->getConfigs()->getServerConfig()->getNested("resource-packs.{$uuid}", "") !== "") {
 				$encryptionKey = $this->getConfigs()->getServerConfig()->getNested("resource-packs.{$uuid}");
 				$this->encryptionKeys[$uuid] = $encryptionKey;
-				$this->getLogger()->debug("Successfully loaded encryption key for resource pack: $uuid");
+				$this->getLogger()->debug("Successfully loaded encryption key for resource pack: $uuid, with key: $encryptionKey");
 			}
 		}
 		$this->getServer()->getPluginManager()->registerEvent(DataPacketSendEvent::class, function (DataPacketSendEvent $event) : void {

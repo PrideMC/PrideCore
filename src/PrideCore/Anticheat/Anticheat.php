@@ -47,6 +47,16 @@ use PrideCore\Player\Player;
 
 use function base64_encode;
 
+/**
+ * TODO:
+ * - Improve AntiAura
+ * - Improve more checks on AntiReach
+ * - Velocity check
+ * - Bad packets check
+ * - Chest stealer check
+ * - Edition Faker (for most advance clients)
+ * - Improve player speed check
+ */
 abstract class Anticheat {
 
 	// Errors: Simply do like hive.
