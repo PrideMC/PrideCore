@@ -30,9 +30,11 @@ declare(strict_types=1);
 
 namespace PrideCore\Anticheat\Modules;
 
+use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\player\GameMode;
 use PrideCore\Anticheat\Anticheat;
 use PrideCore\Core;
@@ -44,13 +46,17 @@ class Reach extends Anticheat implements Listener {
 	public const MAX_PLAYER_REACH = 8.1;
 	public const MAX_PLAYER_REACH_V2 = 4.0;
 
+	private const MAX_REACH_DISTANCE_CREATIVE_V3 = 13;
+	private const MAX_REACH_DISTANCE_SURVIVAL_V3 = 7;
+	private const MAX_REACH_DISTANCE_ENTITY_INTERACTION_V3 = 8;
+
 	public function __construct()
 	{
 		parent::__construct(Anticheat::REACH);
 		Core::getInstance()->getServer()->getPluginManager()->registerEvents($this, Core::getInstance());
 	}
 
-	public function handleEvent(EntityDamageByEntityEvent $event) : void{
+	public function reachV1(EntityDamageByEntityEvent $event) : void{
 		if(($player = $event->getEntity()) instanceof Player && ($damager = $event->getDamager()) instanceof Player){
 			if($damager->getRankId() === Rank::OWNER) return;
 			if($damager->getGamemode()->equals(GameMode::CREATIVE())) return;
@@ -62,7 +68,7 @@ class Reach extends Anticheat implements Listener {
 	}
 
 	// V2 - just check again...
-	public function onDamage(EntityDamageEvent $event){
+	public function reachV2(EntityDamageEvent $event){
 		if($event instanceof EntityDamageByEntityEvent && $event->getEntity() instanceof Player && $event->getDamager() instanceof Player){
 			if($event->getDamager()->getRankId() === Rank::OWNER) return;
 			if($event->getDamager()->getGamemode()->equals(GameMode::CREATIVE())) return;
@@ -70,6 +76,22 @@ class Reach extends Anticheat implements Listener {
 			if($event->getEntity()->getLocation()->distanceSquared($event->getDamager()->getLocation()) > Reach::MAX_PLAYER_REACH_V2){
 				$this->fail($event->getDamager());
 			}
+		}
+	}
+
+	// V3 - just checking again
+	public function reachV3(EntityDamageEvent $event){
+		if($event instanceof EntityDamageByEntityEvent && $event->getEntity() instanceof Player && $event->getDamager() instanceof Player){
+			if($event->getDamager()->getRankId() === Rank::OWNER) return;
+			if(!$event->getDamager()->canInteract($event->getEntity()->getLocation()->add(0.5, 0.5, 0.5), $event->getEntity()->isCreative() ? self::MAX_REACH_DISTANCE_CREATIVE_V3 : self::MAX_REACH_DISTANCE_SURVIVAL_V3)){
+				$this->fail($event->getDamager());
+			}
+		}
+	}
+
+	public function reachBlockV1(PlayerInteractEvent $event) : void{
+		if(!$event->getPlayer()->canInteract($event->getBlock()->getPosition()->add(0.5, 0.5, 0.5), $event->getPlayer()->isCreative() ? self::MAX_REACH_DISTANCE_CREATIVE_V3 : self::MAX_REACH_DISTANCE_SURVIVAL_V3)){
+			$this->fail($event->getPlayer());
 		}
 	}
 }

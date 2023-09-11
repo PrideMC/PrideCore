@@ -30,8 +30,8 @@ declare(strict_types = 1);
 
 namespace CortexPE\DiscordWebhookAPI;
 
-use CortexPE\DiscordWebhookAPI\task\DiscordWebhookSendTask;
-use pocketmine\Server;
+use libasynCurl\Curl;
+use function json_encode;
 use function filter_var;
 
 class Webhook {
@@ -51,6 +51,6 @@ class Webhook {
 	}
 
 	public function send(Message $message) : void{
-		Server::getInstance()->getAsyncPool()->submitTask(new DiscordWebhookSendTask($this->getUrl(), $message));
+		Curl::postRequest($this->getURL(), json_encode($message), 10, ["Content-Type: application/json"]);
 	}
 }
