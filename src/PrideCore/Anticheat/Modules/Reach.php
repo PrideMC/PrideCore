@@ -86,6 +86,10 @@ class Reach extends Anticheat implements Listener {
 			if(!$event->getDamager()->canInteract($event->getEntity()->getLocation()->add(0.5, 0.5, 0.5), $event->getEntity()->isCreative() ? self::MAX_REACH_DISTANCE_CREATIVE_V3 : self::MAX_REACH_DISTANCE_SURVIVAL_V3)){
 				$this->fail($event->getDamager());
 			}
+			if(!$event->getDamager()->canInteract($event->getEntity()->getLocation(), self::MAX_REACH_DISTANCE_ENTITY_INTERACTION)){
+				$this->fail($event->getDamager());
+				$event->cancel();
+			}
 		}
 	}
 

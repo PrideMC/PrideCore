@@ -147,7 +147,7 @@ abstract class Anticheat {
 				return "Killaura";
 				break;
 			case Anticheat::GLITCH:
-				return "Glitching";
+				return "Glitch or Bugging";
 				break;
 			case Anticheat::FLIGHT:
 				return "Flight";
@@ -158,7 +158,7 @@ abstract class Anticheat {
 			case Anticheat::BADPACKET:
 				return "Bad Packets";
 				break;
-			case Anticheat::BADPACKET:
+			case Anticheat::NOPACKET:
 				return "NoPacket";
 				break;
 			case Anticheat::CHEST_STEALLER:

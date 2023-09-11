@@ -83,7 +83,7 @@ class Killaura extends Anticheat implements Listener {
 	}
 
 	// Commonly in Toolbox
-	public function handlePackets(Packet $packet, Player $player) : void{
+	public function toolboxAura(Packet $packet, Player $player) : void{
 		if($player->getRankId() === Rank::OWNER) return;
 		if($player->getGamemode()->equals(GameMode::CREATIVE())) return;
 		if($player->getGamemode()->equals(GameMode::SPECTATOR())) return;
@@ -106,7 +106,7 @@ class Killaura extends Anticheat implements Listener {
 
 	public function processEvent(DataPacketReceiveEvent $event) : void{
 		if($event->getPacket() instanceof AnimatePacket || $event->getPacket() instanceof InventoryTransactionPacket){
-			$this->handlePackets($event->getPacket(), $event->getOrigin()->getPlayer());
+			$this->toolboxAura($event->getPacket(), $event->getOrigin()->getPlayer());
 		}
 	}
 
