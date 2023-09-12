@@ -30,8 +30,8 @@ declare(strict_types=1);
 
 namespace PrideCore\Anticheat\Modules;
 
+use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\network\mcpe\protocol\AnimatePacket;
 use pocketmine\network\mcpe\protocol\DataPacket;
@@ -43,6 +43,7 @@ use PrideCore\Anticheat\Anticheat;
 use PrideCore\Core;
 use PrideCore\Player\Player;
 use PrideCore\Utils\Rank;
+use function abs;
 
 class Killaura extends Anticheat implements Listener {
 
@@ -67,7 +68,7 @@ class Killaura extends Anticheat implements Listener {
 			}
 		}
 
-		if($packet instanceof InventoryTransactionPacket && $packet->trData->getTypeId() === InventoryTransactionPacket::TYPE_USE_ITEM_ON_ENTITY && $packet->trData->getActionType() === UseItemOnEntityTransactionData::ACTION_ATTACK){
+		if($packet instanceof InventoryTransactionPacket && $packet->trData->getTypeId() === InventoryTransactionPacket::TYPE_USE_ITEM_ON_ENTITY && $packet->trData->getTypeId() === UseItemOnEntityTransactionData::ACTION_ATTACK){
 			if(!$swing && $swing !== null){
 				$this->fail($player);
 			}
@@ -76,17 +77,17 @@ class Killaura extends Anticheat implements Listener {
 
 	public function processEvent(DataPacketReceiveEvent $event) : void{
 		if($event->getPacket() instanceof AnimatePacket || $event->getPacket() instanceof InventoryTransactionPacket){
-			$this->handlePackets($event->getPacket(), $event->getOrigin()->getPlayer());
+			$this->killauraV1($event->getPacket(), $event->getOrigin()->getPlayer());
 		}
 	}
-    
-    // check player yaw if their head is actually hitting the player, but might possible to bypass if player has aimbot
-    public function killauraV2(EntityDamageByEntityEvent $event) : void{
+
+	// check player yaw if their head is actually hitting the player, but might possible to bypass if player has aimbot
+	public function killauraV2(EntityDamageByEntityEvent $event) : void{
 		$entity = $event->getEntity();
 		$damager = $event->getDamager();
 		if($damager instanceof Player){
-			$alpha = abs($damager->yaw - $entity->yaw) / 2;
-			if(!($alpha >= 50 and $alpha <= 140)){
+			$alpha = abs($damager->getLocation()->yaw - $entity->getLocation()->yaw) / 2;
+			if(!($alpha >= 50 && $alpha <= 140)){
 				$event->cancel();
 				$this->fail($damager);
 			}
