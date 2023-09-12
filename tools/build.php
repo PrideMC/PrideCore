@@ -41,7 +41,7 @@ copyDirectory($from . "resources", $to . "resources");
 
 yaml_emit_file($to . "plugin.yml", (array) yaml_parse_file($from . "plugin.yml"));
 
-$outputPath = getcwd() . DIRECTORY_SEPARATOR . "PrideCore.phar";
+$outputPath = getcwd() . DIRECTORY_SEPARATOR . "PridePractice.phar";
 
 @unlink($outputPath);
 

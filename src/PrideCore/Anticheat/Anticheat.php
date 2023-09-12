@@ -37,8 +37,8 @@ use pocketmine\utils\TextFormat as TF;
 use PrideCore\Anticheat\Modules\Flight;
 use PrideCore\Anticheat\Modules\Glitch;
 use PrideCore\Anticheat\Modules\Instabreak;
-use PrideCore\Anticheat\Modules\NoClip;
 use PrideCore\Anticheat\Modules\Killaura;
+use PrideCore\Anticheat\Modules\NoClip;
 use PrideCore\Anticheat\Modules\NoPacket;
 use PrideCore\Anticheat\Modules\Reach;
 use PrideCore\Anticheat\Modules\Timer;
@@ -108,14 +108,14 @@ abstract class Anticheat {
 	}
 
 	public function fail(Player $player){
-		if(!isset($this->failed[$player->getUniqueId()->__toString()])) $this->failed[$player->getUniqueId()->__toString()] = 1;
-		if($this->failed[$player->getUniqueId()->__toString()] > $this->getMaxViolation()){
-			unset($this->failed[$player->getUniqueId()->__toString()]);
+		if(!isset($this->failed[$player->getUniqueId()->__toString()][$this->flag])) $this->failed[$player->getUniqueId()->__toString()][$this->flag] = 1;
+		if($this->failed[$player->getUniqueId()->__toString()][$this->flag] > $this->getMaxViolation()){
+			unset($this->failed[$player->getUniqueId()->__toString()][$this->flag]);
 			Core::getInstance()->getLogger()->info(Core::PREFIX . " " . Core::ARROW . " " . TF::RED . $player->getName() . " is kicked for suspected using " . $this->typeIdToString($this->flag) . "!");
 			$this->kick($player, $this->typetoReasonString($this->flag));
 		} else {
 			Core::getInstance()->getLogger()->info(Core::PREFIX . " " . Core::ARROW . " " . TF::RED . $player->getName() . " is suspected using " . $this->typeIdToString($this->flag) . "!");
-			$this->failed[$player->getUniqueId()->__toString()]++;
+			$this->failed[$player->getUniqueId()->__toString()][$this->flag]++;
 		}
 	}
 
@@ -264,7 +264,7 @@ abstract class Anticheat {
 		// load all available check class
 		(new Reach());
 		//(new Flight()); TODO
-        (new Killaura());
+		(new Killaura());
 		(new NoClip());
 		(new Glitch());
 		(new Instabreak());

@@ -31,8 +31,8 @@ declare(strict_types = 1);
 namespace CortexPE\DiscordWebhookAPI;
 
 use libasynCurl\Curl;
-use function json_encode;
 use function filter_var;
+use function json_encode;
 
 class Webhook {
 	/** @var string */

@@ -46,7 +46,10 @@ use function imagecolorat;
 use function imagedestroy;
 use function imagesx;
 use function imagesy;
+use function intval;
+use function microtime;
 use function mt_rand;
+use function mt_srand;
 use function preg_match;
 use function preg_replace;
 use function sizeof;
@@ -410,14 +413,14 @@ class Utils
 
 		$player->kill();
 	}
-    
-    public static function generateCode(int $length, string $chars = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789"): string{
-        mt_srand(intval(microtime(true)*1000000));
-        $pass = '' ;
-        for($i = 0; $i < $length; $i += 1){
-            $num = mt_rand() % strlen($chars);
-            $pass .= $chars[$num];
-        }
-        return $pass;
-    }
+
+	public static function generateCode(int $length, string $chars = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789") : string{
+		mt_srand(intval(microtime(true) * 1000000));
+		$pass = '' ;
+		for($i = 0; $i < $length; $i += 1){
+			$num = mt_rand() % strlen($chars);
+			$pass .= $chars[$num];
+		}
+		return $pass;
+	}
 }

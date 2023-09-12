@@ -315,7 +315,7 @@ class Player extends \pocketmine\player\Player
 
 	public function isInHub() : bool{
 
-		if(str_contains("lb", $this->getWorld()->getFolderName())){
+		if(str_contains("lb", $this->getWorld()->getFolderName()) || str_contains("lobby", $this->getWorld()->getFolderName()) || str_contains("hub", $this->getWorld()->getFolderName())){
 			return true;
 		}
 

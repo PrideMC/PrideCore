@@ -43,8 +43,6 @@ use PrideCore\Anticheat\Anticheat;
 use PrideCore\Core;
 use PrideCore\Player\Player;
 use PrideCore\Utils\Rank;
-use function microtime;
-use function spl_object_hash;
 
 class Killaura extends Anticheat implements Listener {
 
@@ -55,7 +53,7 @@ class Killaura extends Anticheat implements Listener {
 	}
 
 	// Commonly in Toolbox
-	public function handlePackets(Packet $packet, Player $player) : void{
+	public function killauraV1(Packet $packet, Player $player) : void{
 		if($player->getRankId() === Rank::OWNER) return;
 		if($player->getGamemode()->equals(GameMode::CREATIVE())) return;
 		if($player->getGamemode()->equals(GameMode::SPECTATOR())) return;
@@ -81,11 +79,17 @@ class Killaura extends Anticheat implements Listener {
 			$this->handlePackets($event->getPacket(), $event->getOrigin()->getPlayer());
 		}
 	}
-
-	public function destroyQuit(PlayerQuitEvent $event) : void{
-		$player = $event->getPlayer();
-		if(isset($this->lastEntity[$player->getUniqueId()->__toString()])) unset($this->lastEntity[$player->getUniqueId()->__toString()]);
-		if(isset($this->entities[$player->getUniqueId()->__toString()])) unset($this->entities[$player->getUniqueId()->__toString()]);
-		if(isset($this->timer[$player->getUniqueId()->__toString()])) unset($this->timer[$player->getUniqueId()->__toString()]);
+    
+    // check player yaw if their head is actually hitting the player, but might possible to bypass if player has aimbot
+    public function killauraV2(EntityDamageByEntityEvent $event) : void{
+		$entity = $event->getEntity();
+		$damager = $event->getDamager();
+		if($damager instanceof Player){
+			$alpha = abs($damager->yaw - $entity->yaw) / 2;
+			if(!($alpha >= 50 and $alpha <= 140)){
+				$event->cancel();
+				$this->fail($damager);
+			}
+		}
 	}
 }

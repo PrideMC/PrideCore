@@ -32,12 +32,12 @@ namespace PrideCore\Anticheat\Modules;
 
 use pocketmine\entity\effect\VanillaEffects;
 use pocketmine\event\Listener;
-use PrideCore\Utils\Rank;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\math\Vector3;
 use pocketmine\world\Position;
 use PrideCore\Anticheat\Anticheat;
 use PrideCore\Core;
+use PrideCore\Utils\Rank;
 use function array_filter;
 use function ceil;
 use function floor;
@@ -45,114 +45,143 @@ use function round;
 
 class Flight extends Anticheat implements Listener{
 
-	private $isElevating = [];
-	private $flyTags = [];
-	private $kicks = [];
-	private $speedpoints = [];
-
-	public const FLY_TAGS = 5;
-	public const MAX_KICKS = 3;
-	public const MAX_POINTS = 7;
-
 	public function __construct()
 	{
 		parent::__construct(Anticheat::FLIGHT);
 		Core::getInstance()->getServer()->getPluginManager()->registerEvents($this, Core::getInstance());
 	}
 
-	public function onMove(PlayerMoveEvent $event){
-		$p = $event->getPlayer();
-
-		if($p->isCreative() || $p->isSpectator() || $p->getAllowFlight() || $p->getEffects()->has(VanillaEffects::JUMP_BOOST()) || $p->getRankId() === Rank::OWNER || $p->getRankId() === Rank::STAFF || $p->getRankId() === Rank::ADMIN) return;
-
-		$name = $p->getName();
-		$isAirUnder = Flight::isAirUnder($p->getPosition());
-
-		if(!$isAirUnder){
-			if(isset($this->isElevating[$name])){
-				unset($this->isElevating[$name]);
-			}
-		} else {
-			$fromY = $event->getFrom()->y;
-			$toY = $event->getTo()->y;
-
-			if($toY < $fromY && isset($this->isElevating[$name])){
-				$this->isElevating[$name] -= $fromY - $toY;
-				if($this->isElevating[$name] <= 0){
-					unset($this->isElevating[$name]);
-				}
-			}
-
-			elseif($toY > $fromY){
-				isset($this->isElevating[$name]) ?
-					$this->isElevating[$name] += $toY - $fromY
-					:
-					$this->isElevating[$name] = $toY - $fromY
-				;
-
-				if($this->isElevating[$name] > 1.5){
-					Flight::FLY_TAGS !== -1 && ++$this->flyTags[$name];
-				}
-			}
-
-			elseif(round($fromY, 5) === round($toY, 5)){
-				Flight::FLY_TAGS !== -1 && ++$this->flyTags[$name];
-			}
-
-			$this->fail($p);
-
-			if($p->getEffects()->has(VanillaEffects::SPEED()) || $p->getRankId() === Rank::OWNER || $p->getRankId() === Rank::STAFF || $p->getRankId() === Rank::ADMIN) return;
-
-			if(($d = Flight::XZDistanceSquared($event->getFrom(), $event->getTo())) > 1.4){
-				++$this->speedpoints[$name];
-			}elseif($d > 3){
-				isset($this->speedpoints[$name]) ? $this->speedpoints[$name] = 2 : $this->speedpoints[$name] += 2;
-			   }elseif($d > 0){
-				$this->speedpoints[$name] -= 1;
-			}
-
-			if(isset($this->speedpoints[$name]) && $this->speedpoints[$name] === Flight::MAX_POINTS){
-				if((isset($this->kicks[$name]) && $this->kicks[$name] < Flight::MAX_KICKS - 1) || !isset($this->kicks[$name])){
-					unset($this->speedpoints[$name]);
-					 ++$this->kicks[$name];
-					 $this->fail($p);
-				} else {
-					   unset($this->kicks[$name]);
-				}
-				return;
-			}
-		}
+	public function flightV1(PlayerMoveEvent $event){
+		$player = $event->getPlayer();
+        if($player->getServer()->isOp($player->getName()) || $player->getRankId() === Rank::OWNER || $player->getRankId() === Rank::STAFF || $player->getRankId() === Rank::ADMIN) return;
+        $beneath = $event->getPlayer()->getWorld()->getBlock($event->getPlayer()->getPosition()->floor()->subtract(0, 1));
+        if($beneath->getId() === 0)) {
+            $event->cancel();
+            $this->fail($player);
+        }
 	}
+    
+    // for toolbox: aka CreativeFly
+    public function flightV2(PlayerToggleFlightEvent $event): void
+    {
+        $player = $event->getPlayer();
 
-	public static function isAirUnder(Position $pos) : bool{
-		$under = [];
-		$last = [];
-		$y = $pos->y - 1;
+        if($player->getServer()->isOp($player->getName()) || $player->getRankId() === Rank::OWNER || $player->getRankId() === Rank::STAFF || $player->getRankId() === Rank::ADMIN) return;
+        $event->cancel();
+        $this->fail($player);
+    }
+    
+    // for toolbox, if toggle flight event isn't working, to prevent bypassing.
+    public function flightV3(PlayerMoveEvent $event)  :void{
+        $player = $event->getPlayer();
+        if(!$player->getAllowFlight()){
+            if($player->isFlying()){
+                $this->fail($player);
+            }
+        }
+    } 
+    
+    // for most advance clients, manipulating fly packets
+    public function flightV4(DataPacketRecieveEvent $event){
+        
+        $player = $event->getOrigin()->getPlayer();
+        $packet = $event->getPacket();
+        
+        if($player === null) return;
+        if($packet instanceof AdventureSettingsPacket){
+            if(!$player->isCreative() and !$player->isSpectator() and !$player->getAllowFlight()){
+                switch ($packet->flags){
+                    case 614:
+                    case 615:
+                    case 103:
+                    case 102:
+                    case 38:
+                    case 39:
+                        $this->fail($player);
+                        break;
+                }
+                if((($packet->flags >> 9) & 0x01 === 1) or (($packet->flags >> 7) & 0x01 === 1) or (($packet->flags >> 6) & 0x01 === 1)){
+                    $this->fail($player);
+                }
+            }
+        }
+    }
+    
+    // advance position checking: we make sure the player blocks surroundings are calculated.
+    public function flightV5(PlayerMoveEvent $event) : void{
+        $player = $event->getPlayer();
+        $oldPos = $event->getFrom();
+        $newPos = $event->getTo();
+        $surroundingBlocks = $this->GetSurroundingBlocks($player);
+        if(!$player->isCreative() and !$player->isSpectator() and !$player->getAllowFlight()){
+            if ($oldPos->getY() <= $newPos->getY()){
+                if($player->getInAirTicks() > 40){
+                    $maxY = $player->getWorld()->getHighestBlockAt($newPos->getX(), $newPos->getZ());
+                        if($newPos->getY() - 2 > $maxY){
+                            if(
+                            !in_array(BlockTypeIds::OAK_FENCE, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::COBBLESTONE_WALL, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::ACACIA_FENCE, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::OAK_FENCE, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::BIRCH_FENCE, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::DARK_OAK_FENCE, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::JUNGLE_FENCE, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::NETHER_BRICK_FENCE, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::SPRUCE_FENCE, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::WARPED_FENCE, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::MANGROVE_FENCE, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::CRIMSON_FENCE, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::CHERRY_FENCE, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::ACACIA_FENCE_GATE, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::OAK_FENCE_GATE, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::BIRCH_FENCE_GATE, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::DARK_OAK_FENCE_GATE, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::JUNGLE_FENCE_GATE, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::SPRUCE_FENCE_GATE, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::WARPED_FENCE_GATE, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::MANGROVE_FENCE_GATE, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::CRIMSON_FENCE_GATE, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::CHERRY_FENCE_GATE, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::GLASS_PANE, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::HARDENED_GLASS_PANE, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::STAINED_GLASS_PANE, $surroundingBlocks)
+                            and !in_array(BlockTypeIds::STAINED_HARDENED_GLASS_PANE, $surroundingBlocks)
+                            ){
+                                $this->fail($player);
+                            }
+                        }
+                }
+            }
+        }
+    }
+    
+    public function GetSurroundingBlocks(Player $player) : array{
+        $world = $player->getWorld();
 
-		$under[] = $pos->world->getBlockAt($pos->x, $y, $pos->z);
+        $posX = $player->getLocation()->getX();
+        $posY = $player->getLocation()->getY();
+        $posZ = $player->getLocation()->getZ();
 
-		if(round($pos->x) === floor($pos->x)){
-			$under[] = $pos->world->getBlockAt($pos->x - 1, $y, $pos->z);
-			$last[0] = floor($pos->x) - 1;
-		}elseif(round($pos->x) === ceil($pos->x)){
-			$under[] = $pos->world->getBlockAt($pos->x, $y, $pos->z);
-			$last[0] = ceil($pos->x);
-		}
+        $pos1 = new Vector3($posX  , $posY, $posZ  );
+        $pos2 = new Vector3($posX-1, $posY, $posZ  );
+        $pos3 = new Vector3($posX-1, $posY, $posZ-1);
+        $pos4 = new Vector3($posX  , $posY, $posZ-1);
+        $pos5 = new Vector3($posX+1, $posY, $posZ  );
+        $pos6 = new Vector3($posX+1, $posY, $posZ+1);
+        $pos7 = new Vector3($posX  , $posY, $posZ+1);
+        $pos8 = new Vector3($posX+1, $posY, $posZ-1);
+        $pos9 = new Vector3($posX-1, $posY, $posZ+1);
 
-		if(round($pos->z) === floor($pos->z)){
-			$under[] = $pos->world->getBlockAt($pos->x, $y, $pos->z - 1);
-			$last[1] = floor($pos->z) - 1;
-		}elseif(round($pos->z) === ceil($pos->z)){
-			$under[] = $pos->world->getBlockAt($pos->x, $y, $pos->z);
-			$last[1] = ceil($pos->z);
-		}
+        $bpos1 = $level->getBlock($pos1)->getTypeId();
+        $bpos2 = $level->getBlock($pos2)->getTypeId();
+        $bpos3 = $level->getBlock($pos3)->getTypeId();
+        $bpos4 = $level->getBlock($pos4)->getTypeId();
+        $bpos5 = $level->getBlock($pos5)->getTypeId();
+        $bpos6 = $level->getBlock($pos6)->getTypeId();
+        $bpos7 = $level->getBlock($pos7)->getTypeId();
+        $bpos8 = $level->getBlock($pos8)->getTypeId();
+        $bpos9 = $level->getBlock($pos9)->getTypeId();
 
-		$under[] = $pos->world->getBlockAt($last[0], $y, $last[1]);
-
-		return !array_filter($under);
-	}
-
-	public static function XZDistanceSquared(Vector3 $v1, Vector3 $v2) : float{
-		return ($v1->x - $v2->x) ** 2 + ($v1->z - $v2->z) ** 2;
-	}
+        return array ($bpos1, $bpos2, $bpos3, $bpos4, $bpos5, $bpos6, $bpos7, $bpos8, $bpos9);
+    }
 }

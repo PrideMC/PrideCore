@@ -30,7 +30,6 @@ declare(strict_types=1);
 
 namespace PrideCore\Anticheat\Modules;
 
-use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;

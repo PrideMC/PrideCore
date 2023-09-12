@@ -40,6 +40,7 @@ use function count;
 use function date;
 use function implode;
 use function in_array;
+use function is_int;
 use function ltrim;
 use function preg_match;
 use function preg_match_all;
@@ -330,4 +331,63 @@ final class TimeUtils {
 		return $output;
 	}
 
+	/**
+	 * converts shorn int-strings to time stamp formats
+	 *
+	 * @param int|string $str The input string or integer value to convert.
+	 * @return int The converted time value in seconds.
+	*/
+	public function stringToTimeFormat(int|string $str) : int {
+		if (is_int($str)) {
+			return $str;
+		}
+
+		preg_match('/^\d+/', $str, $matches);
+		$value = (int) $matches[0];
+
+		preg_match('/[a-z]+$/', $str, $matches);
+		$format = $matches[0];
+
+		switch($format) {
+			case 's':
+				$seconds = $value;
+				break;
+			case 'm':
+				$seconds = $value * 60;
+				break;
+			case 'h':
+				$seconds = $value * 60 * 60;
+				break;
+			case 'd':
+				$seconds = $value * 60 * 60 * 24;
+				break;
+			case 'w':
+				$seconds = $value * 60 * 60 * 24 * 7;
+				break;
+			case 'y':
+				$seconds = $value * 60 * 60 * 24 * 365;
+				break;
+			default:
+				$seconds = $value;
+		}
+
+		return $seconds;
+	}
+
+	/**
+	 * converts ints to readable shorten string-ints (K, M, B, etc.).
+	 *
+	 * @param int $number The integer to convert.
+	 * @param int $precision The number of decimal places to include in the output (default is 1).
+	 * @return string The human-readable number with unit suffix.
+	*/
+	public function intToReadable(int $number, int $precision = 1) : string {
+		$suffixes = ['', 'K', 'M', 'B', 'T', 'P', 'E', 'Z', 'Y'];
+		$suffixIndex = 0;
+		while (abs($number) >= 1000 && $suffixIndex < count($suffixes) - 1) {
+			$number /= 1000;
+			$suffixIndex++;
+		}
+		return round($number, $precision) . $suffixes[$suffixIndex];
+	}
 }

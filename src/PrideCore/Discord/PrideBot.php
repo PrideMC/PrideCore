@@ -38,10 +38,10 @@ class Bot implements Listener{
 	private DiscordBot $bot;
 
 	public function __construct(){
-        
-    }
-    
-    public function onMessage(MessageEvent $event){
-        
-    }
+
+	}
+
+	public function onMessage(MessageEvent $event){
+
+	}
 }
