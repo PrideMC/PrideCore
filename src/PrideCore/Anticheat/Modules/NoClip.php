@@ -17,12 +17,13 @@
  *   any form whatsoever without written permission.
  *
  *  Copyright © PrideMC Network - All Rights Reserved
+ *                     Season #5
  *
  *  www.mcpride.tk                 github.com/PrideMC
  *  twitter.com/PrideMC         youtube.com/c/PrideMC
  *  discord.gg/PrideMC           facebook.com/PrideMC
  *               bit.ly/JoinInPrideMC
- *  #StandWithUkraine                     #PrideMonth
+ *  #PrideGames                           #PrideMonth
  *
  */
 
@@ -35,7 +36,6 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\player\GameMode;
 use PrideCore\Anticheat\Anticheat;
-use PrideCore\Core;
 
 class NoClip extends Anticheat implements Listener
 {
@@ -43,7 +43,6 @@ class NoClip extends Anticheat implements Listener
 	public function __construct()
 	{
 		parent::__construct(Anticheat::NOCLIP);
-		Core::getInstance()->getServer()->getPluginManager()->registerEvents($this, Core::getInstance());
 	}
 
 	public function onMove(PlayerMoveEvent $event) {

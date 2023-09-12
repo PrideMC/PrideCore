@@ -17,12 +17,13 @@
  *   any form whatsoever without written permission.
  *
  *  Copyright © PrideMC Network - All Rights Reserved
+ *                     Season #5
  *
  *  www.mcpride.tk                 github.com/PrideMC
  *  twitter.com/PrideMC         youtube.com/c/PrideMC
  *  discord.gg/PrideMC           facebook.com/PrideMC
  *               bit.ly/JoinInPrideMC
- *  #StandWithUkraine                     #PrideMonth
+ *  #PrideGames                           #PrideMonth
  *
  */
 
@@ -30,15 +31,14 @@ declare(strict_types=1);
 
 namespace PrideCore\Anticheat\Modules;
 
+use pocketmine\block\BlockTypeIds;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerMoveEvent;
-use pocketmine\math\Vector3;
-use pocketmine\block\BlockTypeIds;
 use pocketmine\event\player\PlayerToggleFlightEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
+use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\UpdateAdventureSettingsPacket;
 use PrideCore\Anticheat\Anticheat;
-use PrideCore\Core;
 use PrideCore\Player\Player;
 use PrideCore\Utils\Rank;
 use function in_array;
@@ -48,7 +48,6 @@ class Flight extends Anticheat implements Listener{
 	public function __construct()
 	{
 		parent::__construct(Anticheat::FLIGHT);
-		Core::getInstance()->getServer()->getPluginManager()->registerEvents($this, Core::getInstance());
 	}
 
 	public function flightV1(PlayerMoveEvent $event){
@@ -88,7 +87,7 @@ class Flight extends Anticheat implements Listener{
 		$packet = $event->getPacket();
 
 		if($player === null) return;
-        if($player->getServer()->isOp($player->getName()) || $player->getRankId() === Rank::OWNER || $player->getRankId() === Rank::STAFF || $player->getRankId() === Rank::ADMIN) return;
+		if($player->getServer()->isOp($player->getName()) || $player->getRankId() === Rank::OWNER || $player->getRankId() === Rank::STAFF || $player->getRankId() === Rank::ADMIN) return;
 		if($packet instanceof UpdateAdventureSettingsPacket){
 			if(!$player->isCreative() && !$player->isSpectator() && !$player->getAllowFlight()){
 				switch ($packet->flags){

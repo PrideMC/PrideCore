@@ -17,12 +17,13 @@
  *   any form whatsoever without written permission.
  *
  *  Copyright © PrideMC Network - All Rights Reserved
+ *                     Season #5
  *
  *  www.mcpride.tk                 github.com/PrideMC
  *  twitter.com/PrideMC         youtube.com/c/PrideMC
  *  discord.gg/PrideMC           facebook.com/PrideMC
  *               bit.ly/JoinInPrideMC
- *  #StandWithUkraine                     #PrideMonth
+ *  #PrideGames                           #PrideMonth
  *
  */
 
@@ -48,16 +49,34 @@ use PrideCore\Player\Player;
 use function base64_encode;
 
 /**
+ * **Guardian Anticheat - PrideMC Network**
+ *
+ * `Anticheat Development` - *Fast-development mode*
+ *
  * TODO:
- * - Improve AntiAura
- * - Improve more checks on AntiReach
+ * - Improve KillAura
+ * - Improve more checks on Reach
  * - Velocity check
  * - Bad packets check
  * - Chest stealer check
  * - Edition Faker (for most advance clients)
  * - Improve player speed check
+ *
+ * Done:
+ * - Reach (90% done, some false-positive)
+ * - Timer (100% done, unchecked)
+ * - NoPacket (100% done, unchecked)
+ * - Instabreak or Nuke (100% done, checked & clean)
+ * - Flight (50% done, unchecked)
+ * - Glitch (100% done, unchecked)
+ * - NoClip (100% done, checked & clean)
+ * - Killaura (20% done, unchecked)
+ * - NoPacket/Blink (100% done, unchecked)
+ * - Timer (100% done, unchecked)
  */
 abstract class Anticheat {
+
+	public const PREFIX = TF::GRAY . "(" . TF::YELLOW . TF::BOLD . "Guardian" . TF::RESET . TF::GRAY . ")";
 
 	// Errors: Simply do like hive.
 	public const BADPACKET_HACK = "Bad packet recieved.";
@@ -111,10 +130,10 @@ abstract class Anticheat {
 		if(!isset($this->failed[$player->getUniqueId()->__toString()][$this->flag])) $this->failed[$player->getUniqueId()->__toString()][$this->flag] = 1;
 		if($this->failed[$player->getUniqueId()->__toString()][$this->flag] > $this->getMaxViolation()){
 			unset($this->failed[$player->getUniqueId()->__toString()][$this->flag]);
-			Core::getInstance()->getLogger()->info(Core::PREFIX . " " . Core::ARROW . " " . TF::RED . $player->getName() . " is kicked for suspected using " . $this->typeIdToString($this->flag) . "!");
+			Core::getInstance()->getLogger()->info(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::RED . $player->getName() . " is kicked for suspected using " . $this->typeIdToString($this->flag) . "!");
 			$this->kick($player, $this->typetoReasonString($this->flag));
 		} else {
-			Core::getInstance()->getLogger()->info(Core::PREFIX . " " . Core::ARROW . " " . TF::RED . $player->getName() . " is suspected using " . $this->typeIdToString($this->flag) . "!");
+			Core::getInstance()->getLogger()->info(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::RED . $player->getName() . " is suspected using " . $this->typeIdToString($this->flag) . "!");
 			$this->failed[$player->getUniqueId()->__toString()][$this->flag]++;
 		}
 	}
@@ -150,7 +169,7 @@ abstract class Anticheat {
 				return "Glitch or Bugging";
 				break;
 			case Anticheat::FLIGHT:
-				return "Flight";
+				return "Flight or Flying";
 				break;
 			case Anticheat::INSTABREAK:
 				return "Instabreak or Nuke";
@@ -159,7 +178,7 @@ abstract class Anticheat {
 				return "Bad Packets";
 				break;
 			case Anticheat::NOPACKET:
-				return "NoPacket";
+				return "No Packet or Blink";
 				break;
 			case Anticheat::CHEST_STEALLER:
 				return "ChestStealer";
@@ -262,13 +281,24 @@ abstract class Anticheat {
 
 	public static function load() : void{
 		// load all available check class
-		(new Reach());
-		//(new Flight()); TODO
-		(new Killaura());
-		(new NoClip());
-		(new Glitch());
-		(new Instabreak());
-		(new NoPacket());
-		(new Timer());
+		// some checks are aren't done
+		foreach([
+			new Reach(),
+			new NoClip(),
+			new Instabreak(),
+			new NoPacket(),
+			new Timer(),
+			new Killaura(),
+			new Glitch(),
+			new Flight(),
+		] as $module){
+			$module->register($module);
+			Core::getInstance()->getServer()->getLogger()->info(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::GREEN . "Enabled \"" . $module->typeIdToString($module->getFlagId()) . "\" module!");
+		}
+	}
+
+	public function register(Anticheat $module) : void{
+		Core::getInstance()->getServer()->getPluginManager()->registerEvents($module, Core::getInstance());
+		Core::getInstance()->getServer()->getLogger()->debug(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::GREEN . "Registered \"" . $module->typeIdToString($module->getFlagId()) . "\" module!");
 	}
 }

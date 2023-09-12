@@ -17,12 +17,13 @@
  *   any form whatsoever without written permission.
  *
  *  Copyright © PrideMC Network - All Rights Reserved
+ *                     Season #5
  *
  *  www.mcpride.tk                 github.com/PrideMC
  *  twitter.com/PrideMC         youtube.com/c/PrideMC
  *  discord.gg/PrideMC           facebook.com/PrideMC
  *               bit.ly/JoinInPrideMC
- *  #StandWithUkraine                     #PrideMonth
+ *  #PrideGames                           #PrideMonth
  *
  */
 
@@ -258,7 +259,7 @@ class Core extends PluginBase
 			if ($this->getConfigs()->getServerConfig()->getNested("resource-packs.{$uuid}", "") !== "") {
 				$encryptionKey = $this->getConfigs()->getServerConfig()->getNested("resource-packs.{$uuid}");
 				$this->encryptionKeys[$uuid] = $encryptionKey;
-				$this->getLogger()->debug("Successfully loaded encryption key for resource pack: $uuid, with key: $encryptionKey");
+				$this->getServer()->getLogger()->debug(Core::PREFIX . " " . Core::ARROW . " " . TF::GREEN . "Successfully loaded encryption key for resource pack: " . TF::AQUA . "$uuid, " . TF::GREEN . "with key:" . TF::AQUA . " $encryptionKey");
 			}
 		}
 		$this->getServer()->getPluginManager()->registerEvent(DataPacketSendEvent::class, function (DataPacketSendEvent $event) : void {

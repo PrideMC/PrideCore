@@ -56,12 +56,13 @@ return (new PhpCsFixer\Config)
   any form whatsoever without written permission.
                         
  Copyright © PrideMC Network - All Rights Reserved
+                    Season #5                     
  
  www.mcpride.tk                 github.com/PrideMC
  twitter.com/PrideMC         youtube.com/c/PrideMC
  discord.gg/PrideMC           facebook.com/PrideMC
               bit.ly/JoinInPrideMC                
- #StandWithUkraine                     #PrideMonth
+ #PrideGames                           #PrideMonth
 
 BODY,
 			'location' => 'after_open'

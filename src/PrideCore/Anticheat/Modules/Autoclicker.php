@@ -29,25 +29,11 @@
 
 declare(strict_types=1);
 
-namespace customiesdevs\customies\item\component;
+namespace PrideCore\Anticheat\Modules;
 
-final class UseDurationComponent implements ItemComponent {
+use pocketmine\event\Listener;
+use PrideCore\Anticheat\Anticheat;
 
-	private int $duration;
+class AutoClicker extends Anticheat implements Listener{
 
-	public function __construct(int $duration) {
-		$this->duration = $duration;
-	}
-
-	public function getName() : string {
-		return "use_duration";
-	}
-
-	public function getValue() : int {
-		return $this->duration;
-	}
-
-	public function isProperty() : bool {
-		return true;
-	}
 }
