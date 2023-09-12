@@ -48,7 +48,7 @@ class NoClip extends Anticheat implements Listener
 
 	public function onMove(PlayerMoveEvent $event) {
 		$id = $event->getPlayer()->getWorld()->getBlock($event->getPlayer()->getLocation())->getTypeId();
-		if ($event->getPlayer()->getWorld()->getBlock($event->getPlayer()->getLocation()->add(0, 1, 0))->isSolid() && $id !== BlockTypeIds::SAND && $id !== BlockTypeIds::GRAVEL && $event->getPlayer()->getGamemode() !== GameMode::SPECTATOR()) {
+		if ($event->getPlayer()->getWorld()->getBlock($event->getPlayer()->getLocation()->add(0, 1, 0))->isSolid() && $id !== BlockTypeIds::SAND && $id !== BlockTypeIds::GRAVEL && $id !== BlockTypeIds::ACACIA_FENCE && $id !== BlockTypeIds::OAK_FENCE && $id !== BlockTypeIds::BIRCH_FENCE && $id !== BlockTypeIds::DARK_OAK_FENCE && $id !== BlockTypeIds::JUNGLE_FENCE && $id !== BlockTypeIds::NETHER_BRICK_FENCE && $id !== BlockTypeIds::SPRUCE_FENCE && $id !== BlockTypeIds::WARPED_FENCE && $id !== BlockTypeIds::MANGROVE_FENCE && $id !== BlockTypeIds::CRIMSON_FENCE && $id !== BlockTypeIds::CHERRY_FENCE  && $id !== BlockTypeIds::ACACIA_FENCE_GATE && $id !== BlockTypeIds::OAK_FENCE_GATE && $id !== BlockTypeIds::BIRCH_FENCE_GATE && $id !== BlockTypeIds::DARK_OAK_FENCE_GATE && $id !== BlockTypeIds::JUNGLE_FENCE_GATE && $id !== BlockTypeIds::SPRUCE_FENCE_GATE && $id !== BlockTypeIds::WARPED_FENCE_GATE && $id !== BlockTypeIds::MANGROVE_FENCE_GATE && $id !== BlockTypeIds::CRIMSON_FENCE_GATE && $id !== BlockTypeIds::CHERRY_FENCE_GATE && $event->getPlayer()->getGamemode() !== GameMode::SPECTATOR()) {
 			$event->cancel();
 			$this->fail($event->getPlayer());
 			return;

@@ -37,11 +37,11 @@ class Bot implements Listener{
 
 	private DiscordBot $bot;
 
-	public function getDiscordBot() : DiscordBot{
-		return $this->bot;
-	}
-
-	public function ready() : void{
-
-	}
+	public function __construct(){
+        
+    }
+    
+    public function onMessage(MessageEvent $event){
+        
+    }
 }

@@ -410,4 +410,14 @@ class Utils
 
 		$player->kill();
 	}
+    
+    public static function generateCode(int $length, string $chars = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789"): string{
+        mt_srand(intval(microtime(true)*1000000));
+        $pass = '' ;
+        for($i = 0; $i < $length; $i += 1){
+            $num = mt_rand() % strlen($chars);
+            $pass .= $chars[$num];
+        }
+        return $pass;
+    }
 }

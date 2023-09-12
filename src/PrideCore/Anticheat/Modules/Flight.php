@@ -32,6 +32,7 @@ namespace PrideCore\Anticheat\Modules;
 
 use pocketmine\entity\effect\VanillaEffects;
 use pocketmine\event\Listener;
+use PrideCore\Utils\Rank;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\math\Vector3;
 use pocketmine\world\Position;

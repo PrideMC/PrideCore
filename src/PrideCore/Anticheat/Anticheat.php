@@ -37,8 +37,8 @@ use pocketmine\utils\TextFormat as TF;
 use PrideCore\Anticheat\Modules\Flight;
 use PrideCore\Anticheat\Modules\Glitch;
 use PrideCore\Anticheat\Modules\Instabreak;
-use PrideCore\Anticheat\Modules\Killaura;
 use PrideCore\Anticheat\Modules\NoClip;
+use PrideCore\Anticheat\Modules\Killaura;
 use PrideCore\Anticheat\Modules\NoPacket;
 use PrideCore\Anticheat\Modules\Reach;
 use PrideCore\Anticheat\Modules\Timer;
@@ -263,8 +263,8 @@ abstract class Anticheat {
 	public static function load() : void{
 		// load all available check class
 		(new Reach());
-		(new Killaura());
-		(new Flight());
+		//(new Flight()); TODO
+        (new Killaura());
 		(new NoClip());
 		(new Glitch());
 		(new Instabreak());

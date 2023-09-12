@@ -30,7 +30,6 @@ declare(strict_types=1);
 
 namespace PrideCore\Anticheat\Modules;
 
-use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
@@ -55,35 +54,8 @@ class Killaura extends Anticheat implements Listener {
 		Core::getInstance()->getServer()->getPluginManager()->registerEvents($this, Core::getInstance());
 	}
 
-	private array $lastEntity = [];
-	private array $entities = [];
-	private array $timer = [];
-
-	public function handleEvent(EntityDamageByEntityEvent $event) : void{ // bruh worst anticheat
-		if(($player = $event->getEntity()) instanceof Player && ($damager = $event->getDamager()) instanceof Player){
-			if($damager->getRankId() === Rank::OWNER) return;
-			if($damager->getGamemode()->equals(GameMode::CREATIVE())) return;
-			if($damager->getGamemode()->equals(GameMode::SPECTATOR())) return;
-			if(!isset($this->lastEntity[$damager->getUniqueId()->__toString()])) $this->lastEntity[$damager->getUniqueId()->__toString()] = spl_object_hash($player);
-			if(!isset($this->entities[$damager->getUniqueId()->__toString()])) $this->lastEntity[$damager->getUniqueId()->__toString()] = 0;
-			if(!isset($this->timer[$damager->getUniqueId()->__toString()])) $this->timer[$damager->getUniqueId()->__toString()] = microtime(true);
-
-			if($this->lastEntity[$damager->getUniqueId()->__toString()] !== spl_object_hash($player)){
-				if($this->lastEntity[$damager->getUniqueId()->__toString()]->distance($damager) > 2){
-					if($this->timer[$damager->getUniqueId()->__toString()] - microtime(true) > 0.5){
-						$event->cancel();
-						$this->fail($damager);
-					}
-				}
-				$this->entities[$damager->getUniqueId()->__toString()]++;
-				$this->lastEntity[$damager->getUniqueId()->__toString()] = spl_object_hash($player);
-				$this->timer[$damager->getUniqueId()->__toString()] = microtime(true);
-			}
-		}
-	}
-
 	// Commonly in Toolbox
-	public function toolboxAura(Packet $packet, Player $player) : void{
+	public function handlePackets(Packet $packet, Player $player) : void{
 		if($player->getRankId() === Rank::OWNER) return;
 		if($player->getGamemode()->equals(GameMode::CREATIVE())) return;
 		if($player->getGamemode()->equals(GameMode::SPECTATOR())) return;
@@ -106,7 +78,7 @@ class Killaura extends Anticheat implements Listener {
 
 	public function processEvent(DataPacketReceiveEvent $event) : void{
 		if($event->getPacket() instanceof AnimatePacket || $event->getPacket() instanceof InventoryTransactionPacket){
-			$this->toolboxAura($event->getPacket(), $event->getOrigin()->getPlayer());
+			$this->handlePackets($event->getPacket(), $event->getOrigin()->getPlayer());
 		}
 	}
 
