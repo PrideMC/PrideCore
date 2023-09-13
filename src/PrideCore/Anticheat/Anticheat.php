@@ -48,6 +48,7 @@ use PrideCore\Player\Player;
 use PrideCore\Utils\Rank;
 
 use function base64_encode;
+use function microtime;
 
 /**
  * **Guardian Anticheat - PrideMC Network**
@@ -164,6 +165,7 @@ abstract class Anticheat {
 				} else {
 					$staff->sendMessage(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::RED . $player->getName() . " is suspected using " . $this->typeIdToString($this->flag) . "!");
 				}
+			}
 		}
 	}
 

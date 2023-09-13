@@ -31,8 +31,8 @@ declare(strict_types=1);
 
 namespace PrideCore\Discord;
 
-use JaxkDev\DiscordBot\Models\Presence\Activity;
 use JaxkDev\DiscordBot\Models\Member;
+use JaxkDev\DiscordBot\Models\Presence\Activity;
 use JaxkDev\DiscordBot\Plugin\ApiRejection;
 use JaxkDev\DiscordBot\Plugin\Events\DiscordReady;
 use pocketmine\event\Listener;

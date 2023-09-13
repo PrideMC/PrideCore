@@ -42,6 +42,7 @@ use PrideCore\Anticheat\Anticheat;
 use PrideCore\Player\Player;
 use PrideCore\Utils\Rank;
 use function in_array;
+use function intval;
 
 class Flight extends Anticheat implements Listener{
 
