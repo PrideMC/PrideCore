@@ -116,7 +116,7 @@ class Flight extends Anticheat implements Listener{
 		if(!$player->isCreative() && !$player->isSpectator() && !$player->getAllowFlight()){
 			if ($oldPos->getY() <= $newPos->getY()){
 				if($player->getInAirTicks() > 40){
-					$maxY = $player->getWorld()->getHighestBlockAt($newPos->getX(), $newPos->getZ());
+					$maxY = $player->getWorld()->getHighestBlockAt(intval($newPos->getX()), intval($newPos->getZ()));
 						if($newPos->getY() - 2 > $maxY){
 							if(
 							!in_array(BlockTypeIds::OAK_FENCE, $surroundingBlocks, true)

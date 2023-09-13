@@ -98,6 +98,6 @@ class Config
 			$this->discord = new PMConfig($this->getDataPath() . "discord.yml", PMConfig::YAML);
 		}
 
-		return $this->redeem;
+		return $this->discord;
 	}
 }

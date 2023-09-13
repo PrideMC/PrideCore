@@ -31,15 +31,13 @@ declare(strict_types = 1);
 
 namespace CortexPE\DiscordWebhookAPI;
 
-use JsonSerializer;
-
 /**
  * TODO:
  * - Add Buttons instead only for links.
  * - Discord Button Interact -> Plugin Action if needed.
  * - Button Colors for not discord button link.
  */
-class Component extends JsonSerializer {
+class Component {
 
 	/** @var array **/
 	protected $data = [];

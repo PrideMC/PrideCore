@@ -125,6 +125,7 @@ abstract class Anticheat {
 	}
 
 	public array $failed = [];
+	public array $lastFail = [];
 
 	public function kick(Player $player, string $reason) : void{
 		$player->kick(TF::GRAY . "Error: " . base64_encode($reason), $reason);
@@ -134,11 +135,21 @@ abstract class Anticheat {
 		if(!isset($this->failed[$player->getUniqueId()->__toString()][$this->flag])) $this->failed[$player->getUniqueId()->__toString()][$this->flag] = 1;
 		if($this->failed[$player->getUniqueId()->__toString()][$this->flag] > $this->getMaxViolation()){
 			unset($this->failed[$player->getUniqueId()->__toString()][$this->flag]);
-			Core::getInstance()->getLogger()->info(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::RED . $player->getName() . " is kicked for suspected using " . $this->typeIdToString($this->flag) . "!");
+			$this->failed[$player->getUniqueId()->__toString()][$this->flag] = 0;
+			Core::getInstance()->getServer()->getLogger()->info(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::RED . $player->getName() . " is kicked for suspected using " . $this->typeIdToString($this->flag) . "!");
 			$this->kick($player, $this->typetoReasonString($this->flag));
 		} else {
-			Core::getInstance()->getLogger()->info(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::RED . $player->getName() . " is suspected using " . $this->typeIdToString($this->flag) . "!");
+			if(isset($this->lastFail[$player->getUniqueId()->__toString()][$this->flag])){
+				if($this->lastFail[$player->getUniqueId()->__toString()][$this->flag] - microtime(true) > 5.0){
+					unset($this->lastFail[$player->getUniqueId()->__toString()][$this->flag]);
+					$this->failed[$player->getUniqueId()->__toString()][$this->flag] = 0;
+				} else {
+					$this->lastFail[$player->getUniqueId()->__toString()][$this->flag] = microtime(true);
+				}
+			}
+			Core::getInstance()->getServer()->getLogger()->info(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::RED . $player->getName() . " is suspected using " . $this->typeIdToString($this->flag) . "!");
 			$this->failed[$player->getUniqueId()->__toString()][$this->flag]++;
+			if(!isset($this->lastFail[$player->getUniqueId()->__toString()][$this->flag])) $this->lastFail[$player->getUniqueId()->__toString()][$this->flag] = microtime(true);
 		}
 	}
 

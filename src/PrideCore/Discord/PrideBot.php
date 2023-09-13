@@ -38,16 +38,12 @@ use JaxkDev\DiscordBot\Plugin\Events\DiscordReady;
 use pocketmine\event\Listener;
 use pocketmine\utils\Config as PMConfig;
 use pocketmine\utils\TextFormat as TF;
+use PrideCore\Core;
 use PrideCore\Utils\Config;
 use function strtolower;
 use function strval;
 
-class Bot implements Listener{
-
-	public function __construct(){
-
-	}
-
+class PrideBot implements Listener{
 	public const PREFIX = TF::GRAY . "(" . TF::YELLOW . "PrideBot" . TF::GRAY . ")" . TF::RESET;
 
 	public function onReady(DiscordReady $event){
@@ -72,5 +68,9 @@ class Bot implements Listener{
 
 	public function getConfig() : PMConfig{
 		return Config::getInstance()->getDiscordConfig();
+	}
+
+	public static function load() : void{
+		Core::getInstance()->getServer()->getPluginManager()->registerEvents(new PrideBot(), Core::getInstance());
 	}
 }

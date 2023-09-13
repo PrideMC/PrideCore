@@ -45,6 +45,8 @@ class AllowedMentions implements JsonSerializable {
 	/** @var array */
 	private $users = [];
 
+	private $data = [];
+
 	/**
 	 * If following role is given into the messages content, every user of it will be mentioned
 	 */

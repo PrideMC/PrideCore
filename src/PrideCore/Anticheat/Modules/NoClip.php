@@ -81,6 +81,22 @@ class NoClip extends Anticheat implements Listener
 				case BlockTypeIds::HARDENED_GLASS_PANE:
 				case BlockTypeIds::STAINED_GLASS_PANE:
 				case BlockTypeIds::STAINED_HARDENED_GLASS_PANE:
+				// Prevent false positive on trapdoors
+				case BlockTypeIds::COBWEB:
+				case BlockTypeIds::ACACIA_TRAPDOOR:
+				case BlockTypeIds::OAK_TRAPDOOR:
+				case BlockTypeIds::BIRCH_TRAPDOOR:
+				case BlockTypeIds::DARK_OAK_TRAPDOOR:
+				case BlockTypeIds::JUNGLE_TRAPDOOR:
+				case BlockTypeIds::SPRUCE_TRAPDOOR:
+				case BlockTypeIds::WARPED_TRAPDOOR:
+				case BlockTypeIds::MANGROVE_TRAPDOOR:
+				case BlockTypeIds::CRIMSON_TRAPDOOR:
+				case BlockTypeIds::CHERRY_TRAPDOOR:
+				case BlockTypeIds::CARPET:
+				case BlockTypeIds::CACTUS:
+				case BlockTypeIds::BELL:
+				case BlockTypeIds::BED:
 					break;
 				default:
 					$event->cancel();

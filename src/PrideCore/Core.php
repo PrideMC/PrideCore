@@ -79,6 +79,7 @@ use PrideCore\Commands\Staff\PardonCommand;
 use PrideCore\Commands\Staff\RankCommand;
 use PrideCore\Commands\Staff\WarnCommand;
 use PrideCore\Discord\DiscordWebhook;
+use PrideCore\Discord\PrideBot;
 use PrideCore\Events\PlayerListener;
 use PrideCore\Events\ServerListener;
 use PrideCore\Player\Skin;
@@ -132,6 +133,7 @@ class Core extends PluginBase
 	{
 		Anticheat::load();
 		Curl::register($this);
+		PrideBot::load();
 		$this->saveResources();
 		$this->encryptPacks();
 		$this->loadTasks();
