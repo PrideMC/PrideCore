@@ -71,6 +71,8 @@ class Permissions
 		$this->register("pride.staff.create_redeem_code", Permissions::OPERATOR);
 		$this->register("pride.staff.remove_redeem_code", Permissions::OPERATOR);
 
+		$this->register("pride.staff.anticheat", Permissions::OPERATOR);
+
 		$this->register("pride.media.nick", Permissions::OPERATOR);
 		$this->register("pride.builder.build", Permissions::OPERATOR);
 

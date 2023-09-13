@@ -45,6 +45,7 @@ use PrideCore\Anticheat\Modules\Reach;
 use PrideCore\Anticheat\Modules\Timer;
 use PrideCore\Core;
 use PrideCore\Player\Player;
+use PrideCore\Utils\Rank;
 
 use function base64_encode;
 
@@ -136,6 +137,7 @@ abstract class Anticheat {
 		if($this->failed[$player->getUniqueId()->__toString()][$this->flag] > $this->getMaxViolation()){
 			unset($this->failed[$player->getUniqueId()->__toString()][$this->flag]);
 			$this->failed[$player->getUniqueId()->__toString()][$this->flag] = 0;
+			$this->notifyAdmins($player, true);
 			Core::getInstance()->getServer()->getLogger()->info(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::RED . $player->getName() . " is kicked for suspected using " . $this->typeIdToString($this->flag) . "!");
 			$this->kick($player, $this->typetoReasonString($this->flag));
 		} else {
@@ -147,9 +149,21 @@ abstract class Anticheat {
 					$this->lastFail[$player->getUniqueId()->__toString()][$this->flag] = microtime(true);
 				}
 			}
+			$this->notifyAdmins($player, false);
 			Core::getInstance()->getServer()->getLogger()->info(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::RED . $player->getName() . " is suspected using " . $this->typeIdToString($this->flag) . "!");
 			$this->failed[$player->getUniqueId()->__toString()][$this->flag]++;
 			if(!isset($this->lastFail[$player->getUniqueId()->__toString()][$this->flag])) $this->lastFail[$player->getUniqueId()->__toString()][$this->flag] = microtime(true);
+		}
+	}
+
+	public function notifyAdmins(Player $player, bool $punish = false) : void{
+		foreach(Core::getInstance()->getServer()->getOnlinePlayers() as $staff){
+			if($staff->hasPermission("pride.staff.anticheat") || Core::getInstance()->getServer()->isOp($staff->getName()) || $staff->getRankId() === Rank::OWNER || $staff->getRankId() === Rank::STAFF || $staff->getRankId() === Rank::ADMIN){
+				if($punish){
+					$staff->sendMessage(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::RED . $player->getName() . " is kicked for suspected using " . $this->typeIdToString($this->flag) . "!");
+				} else {
+					$staff->sendMessage(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::RED . $player->getName() . " is suspected using " . $this->typeIdToString($this->flag) . "!");
+				}
 		}
 	}
 

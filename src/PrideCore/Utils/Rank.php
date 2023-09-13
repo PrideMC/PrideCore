@@ -401,6 +401,7 @@ class Rank
 				$permissions["pride.staff.mute"] = true;
 				$permissions["pride.staff.globalmute"] = true;
 				$permissions["pride.bypass.globalmute"] = true;
+				$permissions["pride.staff.anticheat"] = true;
 				break;
 			case Rank::BUILDER:
 				$permissions["pride.command.basic"] = true;
@@ -425,6 +426,7 @@ class Rank
 				$permissions["pride.staff.freeze"] = true;
 				$permissions["pride.staff.warn"] = true;
 				$permissions["pride.bypass.globalmute"] = true;
+				$permissions["pride.staff.anticheat"] = true;
 				break;
 			case Rank::STAFF:
 			case Rank::TEAM:
@@ -444,6 +446,7 @@ class Rank
 				$permissions["pride.staff.warn"] = true;
 				$permissions["pride.staff.create_redeem_code"] = true;
 				$permissions["pride.staff.remove_redeem_code"] = true;
+				$permissions["pride.staff.anticheat"] = true;
 				$permissions["pride.staff.maintenance"] = true;
 				$permissions["pride.staff.rank"] = true;
 				$permissions["pride.staff.disguise"] = true;
