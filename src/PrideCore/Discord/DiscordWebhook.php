@@ -31,13 +31,13 @@ declare(strict_types=1);
 
 namespace PrideCore\Discord;
 
+use CortexPE\DiscordWebhookAPI\Component;
 use CortexPE\DiscordWebhookAPI\Embed;
 use CortexPE\DiscordWebhookAPI\Message;
 use CortexPE\DiscordWebhookAPI\Webhook;
 use pocketmine\utils\SingletonTrait;
 use PrideCore\Core;
 use PrideCore\Utils\Config;
-use CortexPE\DiscordWebhookAPI\Component;
 
 /**
  * Discord Webhook related functions.
