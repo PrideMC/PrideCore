@@ -81,9 +81,11 @@ class NoClip extends Anticheat implements Listener
 				case BlockTypeIds::HARDENED_GLASS_PANE:
 				case BlockTypeIds::STAINED_GLASS_PANE:
 				case BlockTypeIds::STAINED_HARDENED_GLASS_PANE:
+					break;
+				default:
 					$event->cancel();
 					$this->fail($event->getPlayer());
-					break;
+				break;
 			}
 			return;
 		}

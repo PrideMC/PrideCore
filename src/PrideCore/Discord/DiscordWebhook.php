@@ -37,6 +37,7 @@ use CortexPE\DiscordWebhookAPI\Webhook;
 use pocketmine\utils\SingletonTrait;
 use PrideCore\Core;
 use PrideCore\Utils\Config;
+use CortexPE\DiscordWebhookAPI\Component;
 
 /**
  * Discord Webhook related functions.
@@ -69,15 +70,18 @@ class DiscordWebhook
 	public function sendBan(string $name, ?string $reason = "Unspecified", ?string $duration = "Permanent", string $source = "PrideMC") : void
 	{
 		if(!Core::$connected) return;
-		$webHook = new Webhook($this->getConfigs()->getServerConfig()->getNested("discord.webhook"));
+		$webHook = new Webhook($this->getConfigs()->getDiscordConfig()->getNested("webhook.url"));
 		$msg = new Message();
 		$msg->setUsername("PrideMC Network");
-		$msg->setAvatarURL($this->getConfigs()->getServerConfig()->getNested("discord.avatar"));
+		$msg->setAvatarURL($this->getConfigs()->getDiscordConfig()->getNested("webhook.avatar"));
 		$embed = new Embed();
 		$embed->setTitle("Banned by " . $source);
 		$embed->setColor(self::RED);
 		$embed->setDescription("```yml\n{$name} was banned by {$source} for {$reason}!\n```");
 		$msg->addEmbed($embed);
+		$component = new Component();
+		$component->addLinkButton("Website", $this->getConfigs()->getDiscordConfig()->getNested("webhook.button-link"));
+		$msg->addComponent($component);
 		$webHook->send($msg);
 	}
 
@@ -87,15 +91,18 @@ class DiscordWebhook
 	public function sendPardon(string $name, string $source = "PrideMC") : void
 	{
 		if(!Core::$connected) return;
-		$webHook = new Webhook($this->getConfigs()->getServerConfig()->getNested("discord.webhook"));
+		$webHook = new Webhook($this->getConfigs()->getDiscordConfig()->getNested("webhook.url"));
 		$msg = new Message();
 		$msg->setUsername("PrideMC Network");
-		$msg->setAvatarURL($this->getConfigs()->getServerConfig()->getNested("discord.avatar"));
+		$msg->setAvatarURL($this->getConfigs()->getDiscordConfig()->getNested("webhook.avatar"));
 		$embed = new Embed();
 		$embed->setTitle("Unbanned by " . $source);
 		$embed->setColor(self::RED);
 		$embed->setDescription("```yml\n{$name} was unbanned by {$source}!\n```");
 		$msg->addEmbed($embed);
+		$component = new Component();
+		$component->addLinkButton("Website", $this->getConfigs()->getDiscordConfig()->getNested("webhook.button-link"));
+		$msg->addComponent($component);
 		$webHook->send($msg);
 	}
 
@@ -105,15 +112,18 @@ class DiscordWebhook
 	public function sendKick(string $name, ?string $reason = "Unspecified", string $source = "PrideMC") : void
 	{
 		if(!Core::$connected) return;
-		$webHook = new Webhook($this->getConfigs()->getServerConfig()->getNested("discord.webhook"));
+		$webHook = new Webhook($this->getConfigs()->getDiscordConfig()->getNested("webhook.url"));
 		$msg = new Message();
 		$msg->setUsername("PrideMC Network");
-		$msg->setAvatarURL($this->getConfigs()->getServerConfig()->getNested("discord.avatar"));
+		$msg->setAvatarURL($this->getConfigs()->getDiscordConfig()->getNested("webhook.avatar"));
 		$embed = new Embed();
 		$embed->setTitle("Kicked by " . $source);
 		$embed->setColor(self::RED);
 		$embed->setDescription("```yml\n{$name} was kicked by {$source} for {$reason}!\n```");
 		$msg->addEmbed($embed);
+		$component = new Component();
+		$component->addLinkButton("Website", $this->getConfigs()->getDiscordConfig()->getNested("webhook.button-link"));
+		$msg->addComponent($component);
 		$webHook->send($msg);
 	}
 
@@ -123,15 +133,18 @@ class DiscordWebhook
 	public function sendMute(string $name, ?string $reason = "Unspecified", string $source = "PrideMC") : void
 	{
 		if(!Core::$connected) return;
-		$webHook = new Webhook($this->getConfigs()->getServerConfig()->getNested("discord.webhook"));
+		$webHook = new Webhook($this->getConfigs()->getDiscordConfig()->getNested("webhook.url"));
 		$msg = new Message();
 		$msg->setUsername("PrideMC Network");
-		$msg->setAvatarURL($this->getConfigs()->getServerConfig()->getNested("discord.avatar"));
+		$msg->setAvatarURL($this->getConfigs()->getDiscordConfig()->getNested("webhook.avatar"));
 		$embed = new Embed();
 		$embed->setTitle("Muted by " . $source);
 		$embed->setColor(self::RED);
 		$embed->setDescription("```yml\n{$name} was muted by {$source} for {$reason}!\n```");
 		$msg->addEmbed($embed);
+		$component = new Component();
+		$component->addLinkButton("Website", $this->getConfigs()->getDiscordConfig()->getNested("webhook.button-link"));
+		$msg->addComponent($component);
 		$webHook->send($msg);
 	}
 
@@ -141,15 +154,18 @@ class DiscordWebhook
 	public function sendUnmute(string $name, ?string $reason = "Unspecified", string $source = "PrideMC") : void
 	{
 		if(!Core::$connected) return;
-		$webHook = new Webhook($this->getConfigs()->getServerConfig()->getNested("discord.webhook"));
+		$webHook = new Webhook($this->getConfigs()->getDiscordConfig()->getNested("webhook.url"));
 		$msg = new Message();
 		$msg->setUsername("PrideMC Network");
-		$msg->setAvatarURL($this->getConfigs()->getServerConfig()->getNested("discord.avatar"));
+		$msg->setAvatarURL($this->getConfigs()->getDiscordConfig()->getNested("webhook.avatar"));
 		$embed = new Embed();
 		$embed->setTitle("Unmuted by " . $source);
 		$embed->setColor(self::RED);
 		$embed->setDescription("```yml\n{$name} was unmuted by {$source} for {$reason}!\n```");
 		$msg->addEmbed($embed);
+		$component = new Component();
+		$component->addLinkButton("Website", $this->getConfigs()->getDiscordConfig()->getNested("webhook.button-link"));
+		$msg->addComponent($component);
 		$webHook->send($msg);
 	}
 
@@ -159,15 +175,18 @@ class DiscordWebhook
 	public function sendEnabled() : void
 	{
 		if(!Core::$connected) return;
-		$webHook = new Webhook($this->getConfigs()->getServerConfig()->getNested("discord.webhook"));
+		$webHook = new Webhook($this->getConfigs()->getDiscordConfig()->getNested("webhook.url"));
 		$msg = new Message();
 		$msg->setUsername("PrideMC Network");
-		$msg->setAvatarURL($this->getConfigs()->getServerConfig()->getNested("discord.avatar"));
+		$msg->setAvatarURL($this->getConfigs()->getDiscordConfig()->getNested("webhook.avatar"));
 		$embed = new Embed();
 		$embed->setTitle("Signal Detected");
 		$embed->setColor(self::RED);
 		$embed->setDescription("```yml\nThe server is now online!\n```");
 		$msg->addEmbed($embed);
+		$component = new Component();
+		$component->addLinkButton("Website", $this->getConfigs()->getDiscordConfig()->getNested("webhook.button-link"));
+		$msg->addComponent($component);
 		$webHook->send($msg);
 	}
 
@@ -177,15 +196,18 @@ class DiscordWebhook
 	public function sendDisabled() : void
 	{
 		if(!Core::$connected) return;
-		$webHook = new Webhook($this->getConfigs()->getServerConfig()->getNested("discord.webhook"));
+		$webHook = new Webhook($this->getConfigs()->getDiscordConfig()->getNested("webhook.url"));
 		$msg = new Message();
 		$msg->setUsername("PrideMC Network");
-		$msg->setAvatarURL($this->getConfigs()->getServerConfig()->getNested("discord.avatar"));
+		$msg->setAvatarURL($this->getConfigs()->getDiscordConfig()->getNested("webhook.avatar"));
 		$embed = new Embed();
 		$embed->setTitle("Signal Detected");
 		$embed->setColor(self::RED);
 		$embed->setDescription("```yml\nThe server is now offline!\n```");
 		$msg->addEmbed($embed);
+		$component = new Component();
+		$component->addLinkButton("Website", $this->getConfigs()->getDiscordConfig()->getNested("webhook.button-link"));
+		$msg->addComponent($component);
 		$webHook->send($msg);
 	}
 
@@ -195,10 +217,10 @@ class DiscordWebhook
 	public function sendGlobalMute(bool $confirm, string $source, ?string $reason = "Unspecified") : void
 	{
 		if(!Core::$connected) return;
-		$webHook = new Webhook($this->getConfigs()->getServerConfig()->getNested("discord.webhook"));
+		$webHook = new Webhook($this->getConfigs()->getDiscordConfig()->getNested("webhook.url"));
 		$msg = new Message();
 		$msg->setUsername("PrideMC Network");
-		$msg->setAvatarURL($this->getConfigs()->getServerConfig()->getNested("discord.avatar"));
+		$msg->setAvatarURL($this->getConfigs()->getDiscordConfig()->getNested("webhook.avatar"));
 		$embed = new Embed();
 		$embed->setTitle("Server Global Chat Mute");
 		$embed->setColor(self::RED);
@@ -208,6 +230,9 @@ class DiscordWebhook
 			$embed->setDescription("```yml\nThe server is now global unmuted by {$source} for {$reason}!\n```");
 		}
 		$msg->addEmbed($embed);
+		$component = new Component();
+		$component->addLinkButton("Website", $this->getConfigs()->getDiscordConfig()->getNested("webhook.button-link"));
+		$msg->addComponent($component);
 		$webHook->send($msg);
 	}
 
@@ -217,15 +242,18 @@ class DiscordWebhook
 	public function sendFreeze(string $name, ?string $source = "PrideMC", ?string $reason = "Unspecified") : void
 	{
 		if(!Core::$connected) return;
-		$webHook = new Webhook($this->getConfigs()->getServerConfig()->getNested("discord.webhook"));
+		$webHook = new Webhook($this->getConfigs()->getDiscordConfig()->getNested("webhook.url"));
 		$msg = new Message();
 		$msg->setUsername("PrideMC Network");
-		$msg->setAvatarURL($this->getConfigs()->getServerConfig()->getNested("discord.avatar"));
+		$msg->setAvatarURL($this->getConfigs()->getDiscordConfig()->getNested("webhook.avatar"));
 		$embed = new Embed();
 		$embed->setTitle("Frozen by " . $source);
 		$embed->setColor(self::RED);
 		$embed->setDescription("```yml\n{$name} was frozen by {$source} for {$reason}!\n```");
 		$msg->addEmbed($embed);
+		$component = new Component();
+		$component->addLinkButton("Website", $this->getConfigs()->getDiscordConfig()->getNested("webhook.button-link"));
+		$msg->addComponent($component);
 		$webHook->send($msg);
 	}
 
@@ -235,15 +263,18 @@ class DiscordWebhook
 	public function sendUnfreeze(string $name, ?string $source = "PrideMC", ?string $reason = "Unspecified") : void
 	{
 		if(!Core::$connected) return;
-		$webHook = new Webhook($this->getConfigs()->getServerConfig()->getNested("discord.webhook"));
+		$webHook = new Webhook($this->getConfigs()->getDiscordConfig()->getNested("webhook.url"));
 		$msg = new Message();
 		$msg->setUsername("PrideMC Network");
-		$msg->setAvatarURL($this->getConfigs()->getServerConfig()->getNested("discord.avatar"));
+		$msg->setAvatarURL($this->getConfigs()->getDiscordConfig()->getNested("webhook.avatar"));
 		$embed = new Embed();
 		$embed->setTitle("Unfrozen by " . $source);
 		$embed->setColor(self::RED);
 		$embed->setDescription("```yml\n{$name} was unfrozen by {$source} for {$reason}!\n```");
 		$msg->addEmbed($embed);
+		$component = new Component();
+		$component->addLinkButton("Website", $this->getConfigs()->getDiscordConfig()->getNested("webhook.button-link"));
+		$msg->addComponent($component);
 		$webHook->send($msg);
 	}
 }

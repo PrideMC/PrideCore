@@ -62,7 +62,7 @@ use function base64_encode;
  * - Edition Faker (for most advance clients)
  * - Improve player speed check
  *
- * Done:
+ * Checks:
  * - Reach (90% done, some false-positive)
  * - Timer (100% done, unchecked)
  * - NoPacket (100% done, unchecked)
@@ -72,7 +72,11 @@ use function base64_encode;
  * - NoClip (100% done, checked & clean)
  * - Killaura (20% done, unchecked)
  * - NoPacket/Blink (100% done, unchecked)
- * - Timer (100% done, unchecked)
+ * - Autoclicker (0% done)
+ * - Chest stealer (0% done)
+ * - Edition Faker (0% done)
+ * - Speed (0% done)
+ * - Velocity (0% done)
  */
 abstract class Anticheat {
 

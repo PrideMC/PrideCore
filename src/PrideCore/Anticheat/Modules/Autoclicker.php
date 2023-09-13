@@ -31,9 +31,12 @@ declare(strict_types=1);
 
 namespace PrideCore\Anticheat\Modules;
 
+use pocketmine\entity\effect\VanillaEffects;
 use pocketmine\event\Listener;
+use pocketmine\event\server\DataPacketReceiveEvent;
+use pocketmine\network\mcpe\protocol\InventoryTransactionPacket;
 use PrideCore\Anticheat\Anticheat;
 
 class AutoClicker extends Anticheat implements Listener{
-
+        
 }

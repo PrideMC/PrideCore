@@ -130,7 +130,7 @@ class Glitch extends Anticheat implements Listener{
 						$z = ($blockHitBox->minZ + $blockHitBox->maxZ) / 2;
 					}
 				}
-				//Prevent pearling into areas too small (configurable in config)
+				//Prevent pearling into areas too small
 				$this->fail($entity);
 				$event->cancel();
 				if($x < 0) $x = $x + 1;

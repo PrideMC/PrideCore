@@ -48,6 +48,8 @@ class Config
 
 	public ?PMConfig $database = null;
 
+	public ?PMConfig $discord = null;
+
 	public function __construct()
 	{
 		self::setInstance($this);
@@ -85,6 +87,15 @@ class Config
 	{
 		if($this->redeem === null){
 			$this->redeem = new PMConfig($this->getDataPath() . "redeem_codes.yml", PMConfig::YAML);
+		}
+
+		return $this->redeem;
+	}
+
+	public function getDiscordConfig() : PMConfig
+	{
+		if($this->discord === null){
+			$this->discord = new PMConfig($this->getDataPath() . "discord.yml", PMConfig::YAML);
 		}
 
 		return $this->redeem;
