@@ -8,14 +8,8 @@ use PrideCore\Player\Player;
 class LobbyManager {
     
     use SingletonTrait;
-
-    public const 
-
-
-    public array $seasonalLobbies = [
-        
-    ];
-
+    
+    public array $lobbies = [];
 
     public static function randomLobby(Player $player) : void{
         
