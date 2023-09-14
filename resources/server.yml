@@ -20,11 +20,6 @@ maintenanceBypass:
 # VPN Check
 vpn:
     api-key: "608361442de944f2888da8c7514d4da0"
-# Discord Webhook
-discord:
-    webhook: "https://discord.com/api/webhooks/945508779137597470/nPooE0vSxD_X0QkdVlNJZOrZg2vaFNIu1LTnFNmpHIF4O89hKUt3BLTQffyjponHiW5P"
-    avatar: "https://cdn.discordapp.com/icons/943673084852981792/c0afb3e87232e2b2791c72e8be5d848c.webp"
-    bot-token: "MTA0MjY4MjYyNTMwOTAxNjE0OA.GXfRZb.oTqMt_7cpGfcljlXTXFI8AsJZkDG32di_xiCJY"
 # Ngrok API
 # https://ngrok.com/
 ngrok:

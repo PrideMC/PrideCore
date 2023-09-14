@@ -75,9 +75,9 @@ class Killaura extends Anticheat implements Listener {
 	}
 
 	public function processEvent(DataPacketReceiveEvent $event) : void{
-		if($event->getPacket() instanceof AnimatePacket || $event->getPacket() instanceof InventoryTransactionPacket){
+		if($event->getOrigin()->getPlayer() !== null){
 			$this->killauraV1($event->getPacket(), $event->getOrigin()->getPlayer());
-		}
+        }
 	}
 
 	// check player yaw if their head is actually hitting the player, but might possible to bypass if player has aimbot

@@ -35,6 +35,7 @@ use pocketmine\block\BlockTypeIds;
 
 use pocketmine\math\Vector3;
 use pocketmine\utils\TextFormat as TF;
+use PrideCore\Anticheat\Modules\BadPackets;
 use PrideCore\Anticheat\Modules\Flight;
 use PrideCore\Anticheat\Modules\Glitch;
 use PrideCore\Anticheat\Modules\Instabreak;
@@ -67,7 +68,7 @@ use function microtime;
  * Checks:
  * - Reach (90% done, some false-positive)
  * - Timer (100% done, unchecked)
- * - NoPacket (100% done, unchecked)
+ * - Bad Packets (100% done, unchecked)
  * - Instabreak or Nuke (100% done, checked & clean)
  * - Flight (50% done, unchecked)
  * - Glitch (100% done, unchecked)
@@ -157,13 +158,21 @@ abstract class Anticheat {
 		}
 	}
 
-	public function notifyAdmins(Player $player, bool $punish = false) : void{
+	public function notifyAdmins(Player|string $player, bool $punish = false) : void{
 		foreach(Core::getInstance()->getServer()->getOnlinePlayers() as $staff){
 			if($staff->hasPermission("pride.staff.anticheat") || Core::getInstance()->getServer()->isOp($staff->getName()) || $staff->getRankId() === Rank::OWNER || $staff->getRankId() === Rank::STAFF || $staff->getRankId() === Rank::ADMIN){
-				if($punish){
-					$staff->sendMessage(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::RED . $player->getName() . " is kicked for suspected using " . $this->typeIdToString($this->flag) . "!");
+				if(is_string($player)){
+					if($punish){
+						$staff->sendMessage(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::RED . $player . " is kicked for suspected using " . $this->typeIdToString($this->flag) . "!");
+					} else {
+						$staff->sendMessage(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::RED . $player . " is suspected using " . $this->typeIdToString($this->flag) . "!");
+					}
 				} else {
-					$staff->sendMessage(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::RED . $player->getName() . " is suspected using " . $this->typeIdToString($this->flag) . "!");
+					if($punish){
+						$staff->sendMessage(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::RED . $player->getName() . " is kicked for suspected using " . $this->typeIdToString($this->flag) . "!");
+					} else {
+						$staff->sendMessage(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::RED . $player->getName() . " is suspected using " . $this->typeIdToString($this->flag) . "!");
+					}
 				}
 			}
 		}
@@ -322,6 +331,7 @@ abstract class Anticheat {
 			new Killaura(),
 			new Glitch(),
 			new Flight(),
+			new BadPackets(),
 		] as $module){
 			$module->register($module);
 			Core::getInstance()->getServer()->getLogger()->info(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::GREEN . "Enabled \"" . $module->typeIdToString($module->getFlagId()) . "\" module!");

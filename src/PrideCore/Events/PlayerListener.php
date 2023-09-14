@@ -77,7 +77,8 @@ class PlayerListener implements Listener
 	{
 		$event->setJoinMessage(""); // just remove useless join message bruh...
 		$player = $event->getPlayer();
-		$player->teleport($player->getServer()->getWorldManager()->getDefaultWorld()->getSafeSpawn());
+		//LobbyManager::randomLobby($player);
+		$player->teleport($player->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
 		Rank::getInstance()->syncRanks($player);
 		Rank::getInstance()->displayName($player);
 		Inventory::clear($player);
