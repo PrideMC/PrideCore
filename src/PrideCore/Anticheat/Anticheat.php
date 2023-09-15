@@ -36,6 +36,7 @@ use pocketmine\block\BlockTypeIds;
 use pocketmine\math\Vector3;
 use pocketmine\utils\TextFormat as TF;
 use PrideCore\Anticheat\Modules\BadPackets;
+use PrideCore\Anticheat\Modules\EditionFaker;
 use PrideCore\Anticheat\Modules\Flight;
 use PrideCore\Anticheat\Modules\Glitch;
 use PrideCore\Anticheat\Modules\Instabreak;
@@ -43,6 +44,7 @@ use PrideCore\Anticheat\Modules\Killaura;
 use PrideCore\Anticheat\Modules\NoClip;
 use PrideCore\Anticheat\Modules\NoPacket;
 use PrideCore\Anticheat\Modules\Reach;
+use PrideCore\Anticheat\Modules\Speed;
 use PrideCore\Anticheat\Modules\Timer;
 use PrideCore\Core;
 use PrideCore\Player\Player;
@@ -328,11 +330,14 @@ abstract class Anticheat {
 			new NoClip(),
 			new Instabreak(),
 			new NoPacket(),
+			new BadPackets(),
+			new EditionFaker(),
 			new Timer(),
 			new Killaura(),
 			new Glitch(),
 			new Flight(),
 			new BadPackets(),
+			new Speed(),
 		] as $module){
 			$module->register($module);
 			Core::getInstance()->getServer()->getLogger()->info(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::GREEN . "Enabled \"" . $module->typeIdToString($module->getFlagId()) . "\" module!");

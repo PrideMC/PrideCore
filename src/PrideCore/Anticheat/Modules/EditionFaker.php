@@ -43,6 +43,11 @@ use function strtoupper;
 
 class EditionFaker extends Anticheat implements Listener{
 
+	public function __construct()
+	{
+		parent::__construct(Anticheat::EDITION_FAKER);
+	}
+
 	public const IP_LIMIT = 3;
 
 	public const NULL_MODELS = [
