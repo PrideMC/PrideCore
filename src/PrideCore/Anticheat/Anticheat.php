@@ -49,6 +49,7 @@ use PrideCore\Player\Player;
 use PrideCore\Utils\Rank;
 
 use function base64_encode;
+use function is_string;
 use function microtime;
 
 /**
@@ -336,6 +337,10 @@ abstract class Anticheat {
 			$module->register($module);
 			Core::getInstance()->getServer()->getLogger()->info(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::GREEN . "Enabled \"" . $module->typeIdToString($module->getFlagId()) . "\" module!");
 		}
+	}
+
+	public static function XZDistanceSquared(Vector3 $v1, Vector3 $v2) : float{
+		return ($v1->x - $v2->x) ** 2 + ($v1->z - $v2->z) ** 2;
 	}
 
 	public function register(Anticheat $module) : void{

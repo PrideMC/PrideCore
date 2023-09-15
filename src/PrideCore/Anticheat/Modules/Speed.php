@@ -29,18 +29,31 @@
 
 declare(strict_types=1);
 
-namespace PrideCore\Utils;
+namespace PrideCore\Anticheat\Modules;
 
-use pocketmine\utils\SingletonTrait;
-use PrideCore\Player\Player;
+use PrideCore\Anticheat\Anticheat;
+use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\entity\effect\VanillaEffects;
 
-class LobbyManager {
+class Speed extends Anticheat implements Listener {
+    
+    public function __construct()
+    {
+        parent::__construct(Anticheat::SPEED);
+    }
 
-	use SingletonTrait;
+    public const MAX_SPEED = 1.4;
 
-	public array $lobbies = [];
-
-	public static function randomLobby(Player $player) : void{
-
-	}
+    public function speedV1(PlayerMoveEvent $event) : void{
+        if($event->getPlayer()->getEffects()->has(VanillaEffects::SPEED())) return;
+        
+        if(($d = Anticheat::XZDistanceSquared($event->getFrom(), $event->getTo())) > Speed::MAX_SPEED){
+            $event->cancel();
+            $this->fail($event->getPlayer());
+        }elseif($d > 3){
+            $event->cancel();
+            $this->fail($event->getPlayer());
+        }
+    }
 }

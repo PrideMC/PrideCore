@@ -77,7 +77,7 @@ class Flight extends Anticheat implements Listener{
 		if($player->getServer()->isOp($player->getName()) || $player->getRankId() === Rank::OWNER || $player->getRankId() === Rank::STAFF || $player->getRankId() === Rank::ADMIN) return;
 		if(!$player->getAllowFlight()){
 			if($player->isFlying()){
-                $event->cancel();
+				$event->cancel();
 				$this->fail($player);
 			}
 		}
@@ -99,13 +99,13 @@ class Flight extends Anticheat implements Listener{
 					case 102:
 					case 38:
 					case 39:
-                        $event->cancel();
+						$event->cancel();
 						$this->fail($player);
 						break;
 				}
 				if((($packet->flags >> 9) & 0x01 === 1) || (($packet->flags >> 7) & 0x01 === 1) || (($packet->flags >> 6) & 0x01 === 1)){
 					$this->fail($player);
-                    $event->cancel();
+					$event->cancel();
 				}
 			}
 		}
@@ -151,7 +151,7 @@ class Flight extends Anticheat implements Listener{
 							|| !in_array(BlockTypeIds::STAINED_GLASS_PANE, $surroundingBlocks, true)
 							|| !in_array(BlockTypeIds::STAINED_HARDENED_GLASS_PANE, $surroundingBlocks, true)
 							){
-                                $event->cancel();
+								$event->cancel();
 								$this->fail($player);
 							}
 						}
