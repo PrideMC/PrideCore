@@ -48,6 +48,7 @@ use PrideCore\Anticheat\Modules\Reach;
 use PrideCore\Anticheat\Modules\Speed;
 use PrideCore\Anticheat\Modules\Timer;
 use PrideCore\Core;
+use PrideCore\Discord\DiscordWebhook;
 use PrideCore\Player\Player;
 use PrideCore\Utils\Rank;
 
@@ -188,11 +189,11 @@ abstract class Anticheat {
 
 	public function notifyOnDiscord(Player|string $player, bool $blocked = true, string $punish = "Block") : void{
 		if(is_string($player)){
-			DiscordWebhook::sendAnticheatLog($player, $this->typeIdToString($this->getFlagId()), $this->typeToReasonString($this->getFlagId()), base64_encode($this->typeToReasonString($this->getFlagId())), $blocked, $punish);
+			DiscordWebhook::getInstance()->sendAnticheatLog($player, $this->typeIdToString($this->getFlagId()), $this->typeToReasonString($this->getFlagId()), base64_encode($this->typeToReasonString($this->getFlagId())), $blocked, $punish);
 		}
 
 		if($player instanceof Player){
-			DiscordWebhook::sendAnticheatLog($player->getName(), $this->typeIdToString($this->getFlagId()), $this->typeToReasonString($this->getFlagId()), base64_encode($this->typeToReasonString($this->getFlagId())), $blocked, $punish);
+			DiscordWebhook::getInstance()->sendAnticheatLog($player->getName(), $this->typeIdToString($this->getFlagId()), $this->typeToReasonString($this->getFlagId()), base64_encode($this->typeToReasonString($this->getFlagId())), $blocked, $punish);
 		}
 	}
 
