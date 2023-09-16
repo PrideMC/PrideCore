@@ -35,6 +35,8 @@ use libpmquery\PMQuery as Query;
 use libpmquery\PMQueryException as QueryException;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
+use pocketmine\utils\TextFormat as TF;
+use PrideCore\Core;
 use PrideCore\Utils\Cache;
 
 use function explode;
@@ -81,7 +83,7 @@ class UpdatePlayersTask extends AsyncTask
 			Cache::getInstance()->setPlayerCount($res['count']);
 		} else {
 			foreach($res['errors'] as $e){
-				$server->getLogger()->debug($e);
+				$server->getLogger()->debug(Core::PREFIX . " " . Core::ARROW . " " . TF::RED . $e);
 			}
 		}
 	}

@@ -31,29 +31,29 @@ declare(strict_types=1);
 
 namespace PrideCore\Anticheat\Modules;
 
-use PrideCore\Anticheat\Anticheat;
+use pocketmine\entity\effect\VanillaEffects;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerMoveEvent;
-use pocketmine\entity\effect\VanillaEffects;
+use PrideCore\Anticheat\Anticheat;
 
 class Speed extends Anticheat implements Listener {
-    
-    public function __construct()
-    {
-        parent::__construct(Anticheat::SPEED);
-    }
 
-    public const MAX_SPEED = 1.4;
+	public function __construct()
+	{
+		parent::__construct(Anticheat::SPEED);
+	}
 
-    public function speedV1(PlayerMoveEvent $event) : void{
-        if($event->getPlayer()->getEffects()->has(VanillaEffects::SPEED())) return;
-        
-        if(($d = Anticheat::XZDistanceSquared($event->getFrom(), $event->getTo())) > Speed::MAX_SPEED){
-            $event->cancel();
-            $this->fail($event->getPlayer());
-        }elseif($d > 3){
-            $event->cancel();
-            $this->fail($event->getPlayer());
-        }
-    }
+	public const MAX_SPEED = 1.4;
+
+	public function speedV1(PlayerMoveEvent $event) : void{
+		if($event->getPlayer()->getEffects()->has(VanillaEffects::SPEED())) return;
+
+		if(($d = Anticheat::XZDistanceSquared($event->getFrom(), $event->getTo())) > Speed::MAX_SPEED){
+			$event->cancel();
+			$this->fail($event->getPlayer());
+		}elseif($d > 3){
+			$event->cancel();
+			$this->fail($event->getPlayer());
+		}
+	}
 }

@@ -277,4 +277,32 @@ class DiscordWebhook
 		$msg->addComponent($component);
 		$webHook->send($msg);
 	}
+
+	/**
+	 * Sends anticheat actions to discord.
+	 */
+	public function sendAnticheatLog(string $name, string $hack = "", string $reason = "", string $errorCode = "", bool $blocked = true, string $punish = "N/A") : void{
+		if(!Core::$connected) return;
+		$webHook = new Webhook($this->getConfigs()->getDiscordConfig()->getNested("webhook.url"));
+		$msg = new Message();
+		$msg->setUsername("PrideMC Network");
+		$msg->setAvatarURL($this->getConfigs()->getDiscordConfig()->getNested("webhook.avatar"));
+		$embed = new Embed();
+		$embed->setTitle("**Guardian Anticheat: **" . $hack);
+		$embed->setColor(self::RED);
+		$embed->setDescription("```yml\nUsername: {$name}\nHack: {$hack}\nReason: {$reason}\nError code: {$errorCode}\nBlocked: {$this->boolToYesOrNo($blocked)}\nPunishment: {$punish}\n```");
+		$msg->addEmbed($embed);
+		$component = new Component();
+		$component->addLinkButton("Website", $this->getConfigs()->getDiscordConfig()->getNested("webhook.button-link"));
+		$msg->addComponent($component);
+		$webHook->send($msg);
+	}
+
+	public function boolToYesOrNo(bool $option) : string{
+		if($option){
+			return "Yes";
+		} else {
+			return "No";
+		}
+	}
 }

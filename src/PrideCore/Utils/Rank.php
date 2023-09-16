@@ -452,6 +452,7 @@ class Rank
 				$permissions["pride.staff.disguise"] = true;
 				$permissions["pride.builder.build"] = true;
 				$permissions["pride.bypass.globalmute"] = true;
+				$permissions["pride.staff.hacks"] = true;
 				break;
 		}
 		Permissions::getInstance()->resetPlayerPermissions();

@@ -121,8 +121,8 @@ class Flight extends Anticheat implements Listener{
 			if ($oldPos->getY() <= $newPos->getY()){
 				if($player->getInAirTicks() > 40){
 					$maxY = $player->getWorld()->getHighestBlockAt(intval($newPos->getX()), intval($newPos->getZ()));
-						if($newPos->getY() - 2 > $maxY){
-							if(
+					if($newPos->getY() - 2 > $maxY){
+						if(
 							!in_array(BlockTypeIds::OAK_FENCE, $surroundingBlocks, true)
 							|| !in_array(BlockTypeIds::COBBLESTONE_WALL, $surroundingBlocks, true)
 							|| !in_array(BlockTypeIds::ACACIA_FENCE, $surroundingBlocks, true)
@@ -150,11 +150,12 @@ class Flight extends Anticheat implements Listener{
 							|| !in_array(BlockTypeIds::HARDENED_GLASS_PANE, $surroundingBlocks, true)
 							|| !in_array(BlockTypeIds::STAINED_GLASS_PANE, $surroundingBlocks, true)
 							|| !in_array(BlockTypeIds::STAINED_HARDENED_GLASS_PANE, $surroundingBlocks, true)
-							){
+							)
+						{
 								$event->cancel();
 								$this->fail($player);
-							}
 						}
+					}
 				}
 			}
 		}

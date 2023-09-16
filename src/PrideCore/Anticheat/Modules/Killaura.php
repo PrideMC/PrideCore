@@ -43,6 +43,7 @@ use pocketmine\player\GameMode;
 use PrideCore\Anticheat\Anticheat;
 use PrideCore\Player\Player;
 use PrideCore\Utils\Rank;
+use PrideGames\LegitHacks\Main as LegitHacks;
 use function abs;
 
 class Killaura extends Anticheat implements Listener {
@@ -57,6 +58,7 @@ class Killaura extends Anticheat implements Listener {
 		if($player->getRankId() === Rank::OWNER) return;
 		if($player->getGamemode()->equals(GameMode::CREATIVE())) return;
 		if($player->getGamemode()->equals(GameMode::SPECTATOR())) return;
+		if(LegitHacks::getInstance()->hasKillaura($player)) return;
 		if(!$packet instanceof DataPacket) return;
 		$swing = null;
 		if($packet instanceof AnimatePacket){
@@ -85,6 +87,7 @@ class Killaura extends Anticheat implements Listener {
 		$entity = $event->getEntity();
 		$damager = $event->getDamager();
 		if($damager instanceof Player){
+			if(LegitHacks::getInstance()->hasKillaura($damager)) return;
 			$alpha = abs($damager->getLocation()->yaw - $entity->getLocation()->yaw) / 2;
 			if(!($alpha >= 50 && $alpha <= 140)){
 				$event->cancel();

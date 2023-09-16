@@ -196,9 +196,9 @@ class Core extends PluginBase
 			"spawnpoint",
 			"tell",
 			"whitelist", // favior of MaintenanceCommand
-			"checkperm",
-			"seed",
-			"list",
+			"checkperm", // useless from devtools
+			"seed", // unneccessary
+			"list", // i have custom one
 			"title",
 			"kill",
 			"banlist", // not usefull
@@ -207,9 +207,9 @@ class Core extends PluginBase
 		] as $command) {
 			if (($cmd = $this->getServer()->getCommandMap()->getCommand($command)) !== null) {
 				$this->getServer()->getCommandMap()->unregister($cmd);
-				$this->getServer()->getLogger()->debug("Unloaded \"" . $command . "\" command.");
+				$this->getServer()->getLogger()->debug(Core::PREFIX . " " . Core::ARROW . " " . TF::GREEN . "The command \"" . $command . "\" has been unloaded.");
 			} else {
-				$this->getServer()->getLogger()->debug("The command \"" . $command . "\" is cannot be unloaded.");
+				$this->getServer()->getLogger()->debug(Core::PREFIX . " " . Core::ARROW . " " . TF::RED . "The command \"" . $command . "\" is cannot be unloaded.");
 			}
 		}
 
@@ -311,9 +311,9 @@ class Core extends PluginBase
 	{
 		foreach ($this->getServer()->getWorldManager()->getWorlds() as $world) {
 			$world->setTime(0);
-			$this->getServer()->getLogger()->debug("Set time to 0 in \"" . $world->getFolderName() . "\".");
+			$this->getServer()->getLogger()->debug(Core::PREFIX . " " . Core::ARROW . " " . TF::GREEN . "Set time to 0 in \"" . $world->getFolderName() . "\".");
 			$world->stopTime();
-			$this->getServer()->getLogger()->debug("Stopped \"" . $world->getFolderName() . "\" the world time.");
+			$this->getServer()->getLogger()->debug(Core::PREFIX . " " . Core::ARROW . " " . TF::GREEN . "Stopped \"" . $world->getFolderName() . "\" the world time.");
 		}
 	}
 
@@ -321,7 +321,7 @@ class Core extends PluginBase
 	{
 		foreach ($this->getServer()->getWorldManager()->getWorlds() as $world) {
 			$world->setTime(12000);
-			$this->getServer()->getLogger()->debug("Set to 12000 the \"" . $world->getFolderName() . "\" of world time.");
+			$this->getServer()->getLogger()->debug(Core::PREFIX . " " . Core::ARROW . " " . TF::GREEN . "Set to 12000 the \"" . $world->getFolderName() . "\" of world time.");
 		}
 	}
 

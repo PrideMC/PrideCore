@@ -35,6 +35,7 @@ use pocketmine\block\BlockTypeIds;
 
 use pocketmine\math\Vector3;
 use pocketmine\utils\TextFormat as TF;
+use PrideCore\Anticheat\Modules\AutoClicker;
 use PrideCore\Anticheat\Modules\BadPackets;
 use PrideCore\Anticheat\Modules\EditionFaker;
 use PrideCore\Anticheat\Modules\Flight;
@@ -78,10 +79,10 @@ use function microtime;
  * - NoClip (100% done, checked & clean)
  * - Killaura (20% done, unchecked)
  * - NoPacket/Blink (100% done, unchecked)
- * - Autoclicker (0% done)
+ * - Autoclicker (100% done, unchecked)
  * - Chest stealer (0% done)
- * - Edition Faker (0% done)
- * - Speed (0% done)
+ * - Edition Faker (100% done, unchecked)
+ * - Speed (90% done)
  * - Velocity (0% done)
  */
 abstract class Anticheat {
@@ -103,6 +104,7 @@ abstract class Anticheat {
 	public const CHESTSTEALER_HACK = "Unexpected transaction packet recieved.";
 	public const EDITIONFAKER_HACK = "Unexpected Game Edition.";
 	public const SPEED_HACK = "Invalid movement recieved.";
+	public const XTRAY_HACK = "Invalid visual packet recieved.";
 
 	public const REACH = 0;
 	public const SPEED = 1;
@@ -116,8 +118,9 @@ abstract class Anticheat {
 	public const INSTABREAK = 9;
 	public const BADPACKET = 10;
 	public const NOPACKET = 11;
-	public const CHEST_STEALLER = 12;
+	public const CHEST_STEALER = 12;
 	public const EDITION_FAKER = 13;
+	public const XTRAY = 14;
 
 	private int $flag;
 
@@ -142,7 +145,8 @@ abstract class Anticheat {
 		if($this->failed[$player->getUniqueId()->__toString()][$this->flag] > $this->getMaxViolation()){
 			unset($this->failed[$player->getUniqueId()->__toString()][$this->flag]);
 			$this->failed[$player->getUniqueId()->__toString()][$this->flag] = 0;
-			$this->notifyAdmins($player, true);
+			$this->notifyAdmins($player, false);
+			$this->notifyOnDiscord($player, true, "Blocked");
 			Core::getInstance()->getServer()->getLogger()->info(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::RED . $player->getName() . " is kicked for suspected using " . $this->typeIdToString($this->flag) . "!");
 			$this->kick($player, $this->typetoReasonString($this->flag));
 		} else {
@@ -154,7 +158,8 @@ abstract class Anticheat {
 					$this->lastFail[$player->getUniqueId()->__toString()][$this->flag] = microtime(true);
 				}
 			}
-			$this->notifyAdmins($player, false);
+			$this->notifyAdmins($player, true, "Blocked");
+			$this->notifyOnDiscord($player, true);
 			Core::getInstance()->getServer()->getLogger()->info(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::RED . $player->getName() . " is suspected using " . $this->typeIdToString($this->flag) . "!");
 			$this->failed[$player->getUniqueId()->__toString()][$this->flag]++;
 			if(!isset($this->lastFail[$player->getUniqueId()->__toString()][$this->flag])) $this->lastFail[$player->getUniqueId()->__toString()][$this->flag] = microtime(true);
@@ -178,6 +183,16 @@ abstract class Anticheat {
 					}
 				}
 			}
+		}
+	}
+
+	public function notifyOnDiscord(Player|string $player, bool $blocked = true, string $punish = "Block") : void{
+		if(is_string($player)){
+			DiscordWebhook::sendAnticheatLog($player, $this->typeIdToString($this->getFlagId()), $this->typeToReasonString($this->getFlagId()), base64_encode($this->typeToReasonString($this->getFlagId())), $blocked, $punish);
+		}
+
+		if($player instanceof Player){
+			DiscordWebhook::sendAnticheatLog($player->getName(), $this->typeIdToString($this->getFlagId()), $this->typeToReasonString($this->getFlagId()), base64_encode($this->typeToReasonString($this->getFlagId())), $blocked, $punish);
 		}
 	}
 
@@ -223,7 +238,7 @@ abstract class Anticheat {
 			case Anticheat::NOPACKET:
 				return "No Packet or Blink";
 				break;
-			case Anticheat::CHEST_STEALLER:
+			case Anticheat::CHEST_STEALER:
 				return "ChestStealer";
 				break;
 			case Anticheat::EDITION_FAKER:
@@ -270,7 +285,7 @@ abstract class Anticheat {
 			case Anticheat::NOPACKET:
 				return Anticheat::NOPACKET_HACK;
 				break;
-			case Anticheat::CHEST_STEALLER:
+			case Anticheat::CHEST_STEALER:
 				return Anticheat::CHESTSTEALER_HACK;
 				break;
 			case Anticheat::EDITION_FAKER:
@@ -326,6 +341,7 @@ abstract class Anticheat {
 		// load all available check class
 		// some checks are aren't done
 		foreach([
+			new AutoClicker(),
 			new Reach(),
 			new NoClip(),
 			new Instabreak(),

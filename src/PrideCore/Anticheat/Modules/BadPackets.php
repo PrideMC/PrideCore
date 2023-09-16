@@ -85,6 +85,7 @@ class BadPackets extends Anticheat implements Listener{
 				if ($player->getRankId() === Rank::OWNER) {
 					return;
 				}
+				$event->cancel();
 				$this->fail($player);
 			}
 		}

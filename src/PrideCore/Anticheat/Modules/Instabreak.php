@@ -39,6 +39,7 @@ use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\player\GameMode;
 use PrideCore\Anticheat\Anticheat;
 use PrideCore\Utils\Rank;
+use PrideGames\LegitHacks\Main as LegitHacks;
 use function ceil;
 use function floor;
 use function microtime;
@@ -59,6 +60,7 @@ class Instabreak extends Anticheat implements Listener{
 
 	public function onBlockBreak(BlockBreakEvent $event) : void{
 		if(!$event->getInstaBreak()){
+			if(LegitHacks::getInstance()->hasNuker($player)) return;
 			$player = $event->getPlayer();
 
 			if($player->getGamemode()->equals(GameMode::SPECTATOR())) return;
