@@ -133,7 +133,7 @@ class Core extends PluginBase
 	{
 		Anticheat::load();
 		Curl::register($this);
-		PrideBot::load();
+		//PrideBot::load();
 		$this->saveResources();
 		$this->encryptPacks();
 		$this->loadTasks();

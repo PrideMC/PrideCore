@@ -102,7 +102,7 @@ abstract class Anticheat {
 	public const GLITCH_HACK = "Invalid packet.";
 	public const FLIGHT_HACK = "Unexpected movement location packet recieved.";
 	public const INSTABREAK_HACK = "Packet recieved miss-match.";
-	public const CHESTSTEALER_HACK = "Unexpected transaction packet recieved.";
+	public const HIGHJUMP_HACK = "Unexpected movement packet recieved.";
 	public const EDITIONFAKER_HACK = "Unexpected Game Edition.";
 	public const SPEED_HACK = "Invalid movement recieved.";
 	public const XTRAY_HACK = "Invalid visual packet recieved.";
@@ -119,7 +119,7 @@ abstract class Anticheat {
 	public const INSTABREAK = 9;
 	public const BADPACKET = 10;
 	public const NOPACKET = 11;
-	public const CHEST_STEALER = 12;
+	public const HIGHJUMP = 12;
 	public const EDITION_FAKER = 13;
 	public const XTRAY = 14;
 
@@ -138,7 +138,7 @@ abstract class Anticheat {
 	public array $lastFail = [];
 
 	public function kick(Player $player, string $reason) : void{
-		$player->kick(TF::GRAY . "Error: " . base64_encode($reason), $reason);
+		$player->kick(TF::GRAY . "Error: " . base64_encode($reason . "-" . str_shuffle("=!-/.][{}_*+.@#$%^&*)(")), $reason);
 	}
 
 	public function fail(Player $player){
@@ -239,8 +239,8 @@ abstract class Anticheat {
 			case Anticheat::NOPACKET:
 				return "No Packet or Blink";
 				break;
-			case Anticheat::CHEST_STEALER:
-				return "ChestStealer";
+			case Anticheat::HIGHJUMP:
+				return "HighJump";
 				break;
 			case Anticheat::EDITION_FAKER:
 				return "Edition Faker";
@@ -286,8 +286,8 @@ abstract class Anticheat {
 			case Anticheat::NOPACKET:
 				return Anticheat::NOPACKET_HACK;
 				break;
-			case Anticheat::CHEST_STEALER:
-				return Anticheat::CHESTSTEALER_HACK;
+			case Anticheat::HIGHJUMP:
+				return Anticheat::HIGHJUMP_HACK;
 				break;
 			case Anticheat::EDITION_FAKER:
 				return Anticheat::EDITIONFAKER_HACK;

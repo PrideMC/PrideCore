@@ -92,6 +92,7 @@ class EditionFaker extends Anticheat implements Listener{
 			foreach ($playersToKick as $player) {
 				if ($player->isConnected()) {
 					$this->notifyAdmins($player, true);
+                    $this->fail($player);
 					$this->kick($player, $this->typeToReasonString($this->getFlagId()));
 				}
 			}
@@ -102,12 +103,14 @@ class EditionFaker extends Anticheat implements Listener{
 
 		if (!(in_array($extraData["DeviceOS"], EditionFaker::DEVICE_OS_LIST, true))) {
 			$this->notifyAdmins($nickname, true);
+            $this->fail($player);
 			$event->setKickFlag(PlayerPreLoginEvent::KICK_FLAG_PLUGIN, TF::GRAY . "Error: " . $this->typeToReasonString($this->getFlagId()));
 			return;
 		}
 
 		if (!(in_array($extraData["DeviceOS"], EditionFaker::NULL_MODELS, true)) && $extraData["DeviceModel"] === "") {
 			$this->notifyAdmins($nickname, true);
+            $this->fail($player);
 			$event->setKickFlag(PlayerPreLoginEvent::KICK_FLAG_PLUGIN, TF::GRAY . "Error: " . $this->typeToReasonString($this->getFlagId()));
 			return;
 		}
@@ -116,6 +119,7 @@ class EditionFaker extends Anticheat implements Listener{
 			$model = explode(" ", $extraData["DeviceModel"], 2)[0];
 			if ($model !== strtoupper($model) && $model !== "") {
 				$this->notifyAdmins($nickname, true);
+                $this->fail($player);
 			$event->setKickFlag(PlayerPreLoginEvent::KICK_FLAG_PLUGIN, TF::GRAY . "Error: " . $this->typeToReasonString($this->getFlagId()));
 				return;
 			}
@@ -124,6 +128,7 @@ class EditionFaker extends Anticheat implements Listener{
 		if ($extraData["DeviceOS"] === DeviceOS::IOS) {
 			if ($extraData["DeviceId"] !== strtoupper($extraData["DeviceId"])) {
 				$this->notifyAdmins($nickname, true);
+                $this->fail($player);
 				$event->setKickFlag(PlayerPreLoginEvent::KICK_FLAG_PLUGIN, TF::GRAY . "Error: " . $this->typeToReasonString($this->getFlagId()));
 			}
 		}

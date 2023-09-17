@@ -47,7 +47,7 @@ class BadPackets extends Anticheat implements Listener{
 
 	public array $packetsPerSecond = [];
 
-	public const MAX_PACKETS = 650;
+	public const MAX_PACKETS = 1000;
 
 	public const MESSAGE_LIMIT = 500;
 
@@ -65,7 +65,7 @@ class BadPackets extends Anticheat implements Listener{
 		}
 
 		if($this->packetsPerSecond[$player->getUniqueId()->getBytes()] > BadPackets::MAX_PACKETS){
-			$this->kick($player, $this->typeToReasonString($this->getFlagId()));
+            $this->fail($player);
 		} else {
 			$this->packetsPerSecond[$player->getUniqueId()->getBytes()]++;
 		}

@@ -31,8 +31,8 @@ declare(strict_types=1);
 
 namespace PrideCore\Discord;
 
-use JaxkDev\DiscordBot\Models\Member;
-use JaxkDev\DiscordBot\Models\Presence\Activity;
+use JaxkDev\DiscordBot\Models\Presence\Status;
+use JaxkDev\DiscordBot\Models\Presence\Activity\Activity;
 use JaxkDev\DiscordBot\Plugin\ApiRejection;
 use JaxkDev\DiscordBot\Plugin\Events\DiscordReady;
 use pocketmine\event\Listener;
@@ -48,15 +48,15 @@ class PrideBot implements Listener{
 
 	public function onReady(DiscordReady $event){
 		$type = match(strtolower(strval($this->getConfig()->getNested("presence.type", "Playing")))){
-			'listening', 'listen' => Activity::TYPE_LISTENING,
-			'watching', 'watch' => Activity::TYPE_WATCHING,
-			default => Activity::TYPE_PLAYING,
+			'listening', 'listen' => ActivityType::LISTENING,
+			'watching', 'watch' => ActivityType::WATCHING,
+			default => ActivityType::PLAYING,
 		};
 		$status = match(strtolower(strval($this->getConfig()->getNested("presence.status", "Online")))){
-			'idle' => Member::STATUS_IDLE,
-			'dnd' => Member::STATUS_DND,
-			'offline' => Member::STATUS_OFFLINE,
-			default => Member::STATUS_ONLINE,
+			'idle' => Status::STATUS_IDLE,
+			'dnd' => Status::STATUS_DND,
+			'offline' => Status::STATUS_OFFLINE,
+			default => Status::STATUS_ONLINE,
 		};
 		$activity = new Activity(strval($this->getConfig()->getNested("presence.message", "play.mcpride.tk")), $type);
 		$this->plugin->getDiscord()->getApi()->updateBotPresence($activity, $status)->then(function(){

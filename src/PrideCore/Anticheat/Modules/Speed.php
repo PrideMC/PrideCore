@@ -31,6 +31,7 @@ declare(strict_types=1);
 
 namespace PrideCore\Anticheat\Modules;
 
+use pocketmine\block\BlockTypeIds;
 use pocketmine\entity\effect\VanillaEffects;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerMoveEvent;
@@ -49,7 +50,9 @@ class Speed extends Anticheat implements Listener {
 		if($event->getPlayer()->getEffects()->has(VanillaEffects::SPEED())) return;
 
 		if(($d = Anticheat::XZDistanceSquared($event->getFrom(), $event->getTo())) > Speed::MAX_SPEED){
-			$event->cancel();
+            $block = $event->getPlayer()->getWorld()->getBlock($event->getPlayer()->getLocation()->getSide(0, 0));
+            // fix false-positive on BoostPads
+            if($block->getTypeId() === BlockTypeIds::WEIGHTED_PRESSURE_PLATE_HEAVY || $block->getTypeId() === BlockTypeIds::WEIGHTED_PRESSURE_PLATE_LIGHT) return;
 			$this->fail($event->getPlayer());
 		}elseif($d > 3){
 			$event->cancel();
