@@ -47,29 +47,7 @@ class BadPackets extends Anticheat implements Listener{
 
 	public array $packetsPerSecond = [];
 
-	public const MAX_PACKETS = 1000;
-
 	public const MESSAGE_LIMIT = 500;
-
-	// limit the packet recieve.
-	public function badPacketV1(DataPacketReceiveEvent $event) : void{
-		$player = $event->getOrigin()->getPlayer();
-		$packet = $event->getPacket();
-
-		if (!($player instanceof Player)) {
-			return;
-		}
-
-		if (!(isset($this->packetsPerSecond[$player->getUniqueId()->getBytes()]))) {
-			$this->packetsPerSecond[$player->getUniqueId()->getBytes()] = 0;
-		}
-
-		if($this->packetsPerSecond[$player->getUniqueId()->getBytes()] > BadPackets::MAX_PACKETS){
-            $this->fail($player);
-		} else {
-			$this->packetsPerSecond[$player->getUniqueId()->getBytes()]++;
-		}
-	}
 
 	// some people bypass message limit, so to prevent message vulnerabilities, we check this.
 	public function badPacketV2(DataPacketReceiveEvent $event) : void{
