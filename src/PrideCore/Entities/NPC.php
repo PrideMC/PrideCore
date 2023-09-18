@@ -38,15 +38,7 @@ use pocketmine\event\entity\EntityDamageEvent;
 use PrideCore\Events\Entities\NPCHitEvent;
 
 class NPC extends Human {
-
-	public function __construct(Skin $skin, string $nametag, float $scale = 1.0)
-	{
-		$this->setSkin($skin);
-		$this->setScale($scale);
-		$this->setNameTag($nametag);
-		$this->setNameTagAlwaysVisible(true);
-	}
-
+	
 	public function attack(EntityDamageEvent $source) : void
 	{
 		if($source instanceof EntityDamageByEntityEvent){

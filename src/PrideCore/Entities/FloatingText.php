@@ -135,7 +135,7 @@ class FloatingText {
 		$text = str_replace("{PING}", $player->getNetworkSession()->getPing() . " ms", $text);
 		$text = str_replace("{PLAYER_NAME}", $player->getNick(), $text);
 		$text = str_replace("{PLAYER_RANK}", ($player->isNick() ? Rank::getInstance()->displayTag(Rank::PLAYER) : Rank::getInstance()->displayTag($player->getRankId())), $text);
-		$text = str_replace("#", "\n", $text);
+		$text = str_replace("#", "\n", $text); // space use of #
 
 		return $text;
 	}
