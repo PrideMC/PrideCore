@@ -67,6 +67,8 @@ class NoPacket extends Anticheat implements Listener {
 		if($elapse > 3){
 			$this->fail($player);
 			return true;
+		} else {
+			$this->reward($player);
 		}
 
 		return false;

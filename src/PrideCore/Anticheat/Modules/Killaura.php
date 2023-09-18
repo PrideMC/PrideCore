@@ -72,6 +72,8 @@ class Killaura extends Anticheat implements Listener {
 		if($packet instanceof InventoryTransactionPacket && $packet->trData->getTypeId() === InventoryTransactionPacket::TYPE_USE_ITEM_ON_ENTITY && $packet->trData->getTypeId() === UseItemOnEntityTransactionData::ACTION_ATTACK){
 			if(!$swing && $swing !== null){
 				$this->fail($player);
+			} else {
+				$this->reward($player);
 			}
 		}
 	}
@@ -92,6 +94,8 @@ class Killaura extends Anticheat implements Listener {
 			if(!($alpha >= 50 && $alpha <= 140)){
 				$event->cancel();
 				$this->fail($damager);
+			} else {
+				$this->reward($player);
 			}
 		}
 	}

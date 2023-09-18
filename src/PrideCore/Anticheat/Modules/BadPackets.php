@@ -65,6 +65,8 @@ class BadPackets extends Anticheat implements Listener{
 				}
 				$event->cancel();
 				$this->fail($player);
+			} else {
+				$this->reward($player);
 			}
 		}
 	}

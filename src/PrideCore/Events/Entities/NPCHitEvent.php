@@ -29,25 +29,22 @@
 
 declare(strict_types=1);
 
-namespace PrideCore\Anticheat\Modules;
+namespace PrideCore\Events\Entities;
 
-use pocketmine\entity\effect\VanillaEffects;
-use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerJumpEvent;
-use PrideCore\Anticheat\Anticheat;
+use pocketmine\event\entity\EntityEvent;
+use PrideCore\Player\Player;
 
-class HighJump extends Anticheat implements Listener{
+class NPCHitEvent extends EntityEvent {
 
-	public function __construct()
+	private Player $player;
+
+	public function __construct(Player $player)
 	{
-		parent::__construct(Anticheat::HIGHJUMP);
+		$this->player = $player;
 	}
 
-	public function highJumpV1(PlayerJumpEvent $event) : void{
-
-		$player = $event->getPlayer();
-
-		if($player->getEffects()->has(VanillaEffects::JUMP_BOOST())) return;
-
+	public function getPlayer() : Player
+	{
+		return $this->player;
 	}
 }

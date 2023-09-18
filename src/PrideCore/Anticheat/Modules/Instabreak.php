@@ -70,6 +70,8 @@ class Instabreak extends Anticheat implements Listener{
 				$this->fail($player);
 				$event->cancel();
 				return;
+			} else {
+				$this->reward($player);
 			}
 
 			$target = $event->getBlock();
@@ -93,6 +95,8 @@ class Instabreak extends Anticheat implements Listener{
 				$this->fail($player);
 				$event->cancel();
 				return;
+			} else {
+				$this->reward($player);
 			}
 
 			unset($this->breakTimes[$uuid]);

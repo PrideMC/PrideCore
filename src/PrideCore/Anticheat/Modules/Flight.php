@@ -58,6 +58,8 @@ class Flight extends Anticheat implements Listener{
 		if($beneath->getTypeId() === BlockTypeIds::AIR) {
 			$event->cancel();
 			$this->fail($player);
+		} else {
+			$this->reward($player);
 		}
 	}
 
@@ -79,6 +81,8 @@ class Flight extends Anticheat implements Listener{
 			if($player->isFlying()){
 				$event->cancel();
 				$this->fail($player);
+			} else {
+				$this->reward($player);
 			}
 		}
 	}
@@ -106,6 +110,8 @@ class Flight extends Anticheat implements Listener{
 				if((($packet->flags >> 9) & 0x01 === 1) || (($packet->flags >> 7) & 0x01 === 1) || (($packet->flags >> 6) & 0x01 === 1)){
 					$this->fail($player);
 					$event->cancel();
+				} else {
+					$this->reward($player);
 				}
 			}
 		}
@@ -154,6 +160,8 @@ class Flight extends Anticheat implements Listener{
 						{
 								$event->cancel();
 								$this->fail($player);
+						} else {
+							$this->reward($player);
 						}
 					}
 				}

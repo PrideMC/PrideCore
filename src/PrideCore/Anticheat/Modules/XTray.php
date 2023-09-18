@@ -36,8 +36,8 @@ use PrideCore\Anticheat\Anticheat;
 
 class XTray extends Anticheat implements Listener {
 
-    public function __construct()
-    {
-        parent::__construct(Anticheat::XTRAY);
-    }
+	public function __construct()
+	{
+		parent::__construct(Anticheat::XTRAY);
+	}
 }

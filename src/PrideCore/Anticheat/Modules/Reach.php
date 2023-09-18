@@ -63,6 +63,8 @@ class Reach extends Anticheat implements Listener {
 			if(LegitHacks::getInstance()->hasReach($damager)) return;
 			if($player->getLocation()->distance($damager->getLocation()) > Reach::MAX_PLAYER_REACH){
 				$this->fail($damager);
+			} else {
+				$this->reward($damager);
 			}
 		}
 	}
@@ -76,6 +78,8 @@ class Reach extends Anticheat implements Listener {
 			if(LegitHacks::getInstance()->hasReach($event->getDamager())) return;
 			if($event->getEntity()->getLocation()->distanceSquared($event->getDamager()->getLocation()) > Reach::MAX_PLAYER_REACH_V2){
 				$this->fail($event->getDamager());
+			} else {
+				$this->reward($damager);
 			}
 		}
 	}
@@ -87,10 +91,14 @@ class Reach extends Anticheat implements Listener {
 			if(LegitHacks::getInstance()->hasReach($event->getDamager())) return;
 			if(!$event->getDamager()->canInteract($event->getEntity()->getLocation()->add(0.5, 0.5, 0.5), $event->getEntity()->isCreative() ? self::MAX_REACH_DISTANCE_CREATIVE_V3 : self::MAX_REACH_DISTANCE_SURVIVAL_V3)){
 				$this->fail($event->getDamager());
+			} else {
+				$this->reward($event->getDamager());
 			}
 			if(!$event->getDamager()->canInteract($event->getEntity()->getLocation(), self::MAX_REACH_DISTANCE_ENTITY_INTERACTION_V3)){
 				$this->fail($event->getDamager());
 				$event->cancel();
+			} else {
+				$this->reward($event->getDamager());
 			}
 		}
 	}
@@ -99,6 +107,8 @@ class Reach extends Anticheat implements Listener {
 		if(LegitHacks::getInstance()->hasReach($event->getPlayer())) return;
 		if(!$event->getPlayer()->canInteract($event->getBlock()->getPosition()->add(0.5, 0.5, 0.5), $event->getPlayer()->isCreative() ? self::MAX_REACH_DISTANCE_CREATIVE_V3 : self::MAX_REACH_DISTANCE_SURVIVAL_V3)){
 			$this->fail($event->getPlayer());
+		} else {
+			$this->reward($event->getDamager());
 		}
 	}
 }

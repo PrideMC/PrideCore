@@ -73,6 +73,8 @@ class Timer extends Anticheat implements Listener {
 				$timer++;
 				if($timer % 10 === 0){
 					$this->fail($player);
+				} else {
+					$this->reward($player);
 				}
 			} else {
 				$timer = 0;

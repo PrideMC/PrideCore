@@ -55,6 +55,7 @@ use PrideCore\Utils\Rank;
 use function base64_encode;
 use function is_string;
 use function microtime;
+use function str_shuffle;
 
 /**
  * **Guardian Anticheat - PrideMC Network**
@@ -141,30 +142,30 @@ abstract class Anticheat {
 		$player->kick(TF::GRAY . "Error: " . base64_encode($reason . "-" . str_shuffle("=!-/.][{}_*+.@#$%^&*)(")), $reason);
 	}
 
-	public function fail(Player $player){
+	public function fail(Player $player) : void{
 		if(!isset($this->failed[$player->getUniqueId()->__toString()][$this->flag])) $this->failed[$player->getUniqueId()->__toString()][$this->flag] = 1;
 		if($this->failed[$player->getUniqueId()->__toString()][$this->flag] > $this->getMaxViolation()){
 			unset($this->failed[$player->getUniqueId()->__toString()][$this->flag]);
 			$this->failed[$player->getUniqueId()->__toString()][$this->flag] = 0;
-			$this->notifyAdmins($player, false);
-			$this->notifyOnDiscord($player, true, "Blocked");
+			$this->notifyAdmins($player, true);
+			$this->notifyOnDiscord($player, true, "Kick");
 			Core::getInstance()->getServer()->getLogger()->info(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::RED . $player->getName() . " is kicked for suspected using " . $this->typeIdToString($this->flag) . "!");
 			$this->kick($player, $this->typetoReasonString($this->flag));
 		} else {
-			if(isset($this->lastFail[$player->getUniqueId()->__toString()][$this->flag])){
-				if($this->lastFail[$player->getUniqueId()->__toString()][$this->flag] - microtime(true) > 5.0){
-					unset($this->lastFail[$player->getUniqueId()->__toString()][$this->flag]);
-					$this->failed[$player->getUniqueId()->__toString()][$this->flag] = 0;
-				} else {
-					$this->lastFail[$player->getUniqueId()->__toString()][$this->flag] = microtime(true);
-				}
-			}
-			$this->notifyAdmins($player, true, "Blocked");
+			$this->notifyAdmins($player, false);
 			$this->notifyOnDiscord($player, true);
 			Core::getInstance()->getServer()->getLogger()->info(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::RED . $player->getName() . " is suspected using " . $this->typeIdToString($this->flag) . "!");
 			$this->failed[$player->getUniqueId()->__toString()][$this->flag]++;
 			if(!isset($this->lastFail[$player->getUniqueId()->__toString()][$this->flag])) $this->lastFail[$player->getUniqueId()->__toString()][$this->flag] = microtime(true);
 		}
+	}
+
+	public function reward(Player $player, int $amount = 1) : void{
+		if(!isset($this->failed[$player->getUniqueId()->__toString()][$this->flag])) $this->failed[$player->getUniqueId()->__toString()][$this->flag] = 0;
+
+		if($this->failed[$player->getUniqueId()->__toString()][$this->flag] === 0) return;
+
+		$this->failed[$player->getUniqueId()->__toString()][$this->flag] -= $amount;
 	}
 
 	public function notifyAdmins(Player|string $player, bool $punish = false) : void{
@@ -190,11 +191,9 @@ abstract class Anticheat {
 	public function notifyOnDiscord(Player|string $player, bool $blocked = true, string $punish = "Block") : void{
 		if(is_string($player)){
 			DiscordWebhook::getInstance()->sendAnticheatLog($player, $this->typeIdToString($this->getFlagId()), $this->typeToReasonString($this->getFlagId()), base64_encode($this->typeToReasonString($this->getFlagId())), $blocked, $punish);
+			return;
 		}
-
-		if($player instanceof Player){
-			DiscordWebhook::getInstance()->sendAnticheatLog($player->getName(), $this->typeIdToString($this->getFlagId()), $this->typeToReasonString($this->getFlagId()), base64_encode($this->typeToReasonString($this->getFlagId())), $blocked, $punish);
-		}
+		DiscordWebhook::getInstance()->sendAnticheatLog($player->getName(), $this->typeIdToString($this->getFlagId()), $this->typeToReasonString($this->getFlagId()), base64_encode($this->typeToReasonString($this->getFlagId())), $blocked, $punish);
 	}
 
 	public function getMaxViolation() : int{
@@ -342,7 +341,7 @@ abstract class Anticheat {
 		// load all available check class
 		// some checks are aren't done
 		foreach([
-			new AutoClicker(),
+			//new AutoClicker(),
 			new Reach(),
 			new NoClip(),
 			new Instabreak(),
@@ -354,7 +353,7 @@ abstract class Anticheat {
 			new Glitch(),
 			new Flight(),
 			new BadPackets(),
-			new Speed(),
+			//new Speed(),
 		] as $module){
 			$module->register($module);
 			Core::getInstance()->getServer()->getLogger()->info(Anticheat::PREFIX . " " . Core::ARROW . " " . TF::GREEN . "Enabled \"" . $module->typeIdToString($module->getFlagId()) . "\" module!");

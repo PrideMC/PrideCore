@@ -46,8 +46,8 @@ class NoClip extends Anticheat implements Listener
 	}
 
 	public function onMove(PlayerMoveEvent $event) {
-		$id = $event->getPlayer()->getWorld()->getBlock($event->getPlayer()->getLocation())->getTypeId();
-		if ($event->getPlayer()->getWorld()->getBlock($event->getPlayer()->getLocation()->add(0, 1, 0))->isSolid() && $event->getPlayer()->getGamemode() !== GameMode::SPECTATOR()) {
+		$id = $event->getPlayer()->getWorld()->getBlock($event->getPlayer()->getLocation()->add(0, -1, 0))->getTypeId();
+		if ($event->getPlayer()->getWorld()->getBlock($event->getPlayer()->getLocation()->add(0, 1, 0))->isSolid() && $event->getPlayer()->getWorld()->getBlock($event->getPlayer()->getLocation()->add(0, -1, 0))->isSolid() && $event->getPlayer()->getGamemode() !== GameMode::SPECTATOR()) {
 			switch($id){
 				// Anti-false positive on falling blocks
 				case BlockTypeIds::SAND:
@@ -97,6 +97,7 @@ class NoClip extends Anticheat implements Listener
 				case BlockTypeIds::CACTUS:
 				case BlockTypeIds::BELL:
 				case BlockTypeIds::BED:
+					$this->reward($player);
 					break;
 				default:
 					$event->cancel();

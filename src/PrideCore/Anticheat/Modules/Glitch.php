@@ -136,6 +136,8 @@ class Glitch extends Anticheat implements Listener{
 				if($x < 0) $x = $x + 1;
 				if($z < 0) $z = $z + 1;
 				Core::getInstance()->getScheduler()->scheduleDelayedTask(new TeleportTask($entity, new Location($x, $y, $z, $entity->getWorld(), $entity->getLocation()->getYaw(), $entity->getLocation()->getPitch())), 5);
+			} else {
+				$this->reward($player);
 			}
 		}
 
@@ -241,6 +243,8 @@ class Glitch extends Anticheat implements Listener{
 				}
 
 				$this->fail($player);
+			} else {
+				$this->reward($player);
 			}
 		}
 	}

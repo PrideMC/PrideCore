@@ -200,7 +200,7 @@ class Core extends PluginBase
 			"seed", // unneccessary
 			"list", // i have custom one
 			"title",
-			"kill",
+			"kill", // subtitute on practice
 			"banlist", // not usefull
 			"particle", // not usefull
 			"listperms",

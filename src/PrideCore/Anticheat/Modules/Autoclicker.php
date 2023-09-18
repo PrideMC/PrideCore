@@ -67,6 +67,8 @@ class AutoClicker extends Anticheat implements Listener{
 
 							if($this->getCps($player) > AutoClicker::MAX_CLICKS){
 								$this->fail($player); // this will automatically detect when player is using autoclicker.
+							} else {
+								$this->reward($event->getPlayer());
 							}
 							break;
 					}
