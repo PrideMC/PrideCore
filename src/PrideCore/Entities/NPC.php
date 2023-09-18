@@ -32,13 +32,12 @@ declare(strict_types=1);
 namespace PrideCore\Entities;
 
 use pocketmine\entity\Human;
-use pocketmine\entity\Skin;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use PrideCore\Events\Entities\NPCHitEvent;
 
 class NPC extends Human {
-	
+
 	public function attack(EntityDamageEvent $source) : void
 	{
 		if($source instanceof EntityDamageByEntityEvent){
